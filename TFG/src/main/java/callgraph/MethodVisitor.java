@@ -26,11 +26,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package call_graph;
+package callgraph;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

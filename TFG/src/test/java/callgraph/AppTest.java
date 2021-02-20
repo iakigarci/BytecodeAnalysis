@@ -1,4 +1,4 @@
-package call_graph;
+package callgraph;
 
 import org.junit.jupiter.api.Test;
 

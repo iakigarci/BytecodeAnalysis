@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package call_graph;
+package callgraph;
 
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.ConstantPool;
@@ -35,7 +35,6 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.MethodGen;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -11,13 +11,12 @@
  *     see <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
-package call_graph;
+package callgraph;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.bcel.classfile.Attribute;
 import org.apache.bcel.classfile.BootstrapMethod;
 import org.apache.bcel.classfile.BootstrapMethods;

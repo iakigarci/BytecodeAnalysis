@@ -3,6 +3,7 @@
   <groupId>com.indaba</groupId>
   <artifactId>TFG</artifactId>
   <version>0.1</version>
+  <packaging>jar</packaging>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -23,7 +24,12 @@
     <jacoco.unit-tests.limit.method-complexity>5</jacoco.unit-tests.limit.method-complexity>
   </properties>
   <dependencies>
-
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>1.5</version>
+      <scope>compile</scope>
+  </dependency>
     <dependency>
       <groupId>org.apache.bcel</groupId>
       <artifactId>bcel</artifactId>
@@ -89,10 +95,7 @@
         <executions>
           <execution>
             <id>checkstyle</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
+            <phase>none</phase>
           </execution>
         </executions>
       </plugin>
@@ -100,6 +103,31 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>assembly-st.xml</descriptor>
+          </descriptors>
+          <archive>
+            <manifestEntries>
+              <Can-Redefine-Classes>true</Can-Redefine-Classes>
+              <Main-Class>callgraph.JCallGraph</Main-Class>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>

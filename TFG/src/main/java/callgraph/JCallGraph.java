@@ -26,16 +26,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package call_graph;
+package callgraph;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.bcel.classfile.ClassParser;
 
 /**
@@ -66,6 +77,8 @@ public class JCallGraph {
                     System.err.println("Jar file " + arg + " does not exist");
                 }
 
+                
+
                 try (JarFile jar = new JarFile(f)) {
                     Stream<JarEntry> entries = enumerationAsStream(jar.entries());
 
@@ -85,6 +98,15 @@ public class JCallGraph {
                     BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                     log.write(methodCalls);
                     log.close();
+                    File dir = null;
+                    dir = new File(System.getProperty("user.dir"));
+                    dir.mkdir();
+                    BufferedWriter writer = Files.newBufferedWriter(Paths.get("prueba"));
+                    CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Name", "Author", "Version", "Branch", "ComponentKey", "LanguageList", "MetricList"));
+                    csvPrinter.printRecord(methodCalls);
+                    csvPrinter.close();
+                    writer.close();
+                    csvPrinter.flush();
                 }
             }
         } catch (IOException e) {
