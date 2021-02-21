@@ -92,24 +92,29 @@ public class JCallGraph {
                     BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                     log.write(methodCalls);
                     log.close();
-                    csvPrinter.printRecord(methodCalls);
+                    
                 }
             }
-            csvPrinter.close();
-            writer.close();
-            //csvPrinter.flush();
+            createCSV(methodCalls);
+            // csvPrinter.flush();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public void createCSV() {
+    public static void createCSV(String methodCalls) throws IOException {
         File dir = null;
-            dir = new File(System.getProperty("user.dir"));
-            dir.mkdir();
-            BufferedWriter writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
-            CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Name","Otro"));
+        dir = new File(System.getProperty("user.dir"));
+        dir.mkdir();
+        BufferedWriter writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
+        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen","Desino"));
+        String[] splited = methodCalls.split(" ");
+        for (int i = 0; i+2 < splited.length; i=i+2) {
+            csvPrinter.printRecord(splited[i],splited[i+1]);
+        }
+        csvPrinter.close();
+        writer.close();
     }
 
     public static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {
