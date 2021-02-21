@@ -59,16 +59,16 @@ public class JCallGraph {
 
     public static void main(String[] args) {
 
-        Function<ClassParser, ClassVisitor> getClassVisitor =
-                (ClassParser cp) -> {
-                    try {
-                        return new ClassVisitor(cp.parse());
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                };
+        Function<ClassParser, ClassVisitor> getClassVisitor = (ClassParser cp) -> {
+            try {
+                return new ClassVisitor(cp.parse());
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        };
 
         try {
+            String methodCalls = null;
             for (String arg : args) {
 
                 File f = new File(arg);
@@ -77,56 +77,50 @@ public class JCallGraph {
                     System.err.println("Jar file " + arg + " does not exist");
                 }
 
-                
-
                 try (JarFile jar = new JarFile(f)) {
                     Stream<JarEntry> entries = enumerationAsStream(jar.entries());
 
-                    String methodCalls = entries.
-                            flatMap(e -> {
-                                if (e.isDirectory() || !e.getName().endsWith(".class"))
-                                    return (new ArrayList<String>()).stream();
+                    methodCalls = entries.flatMap(e -> {
+                        if (e.isDirectory() || !e.getName().endsWith(".class")) 
+                            return (new ArrayList<String>()).stream();
 
-                                ClassParser cp = new ClassParser(arg, e.getName());
-                                return getClassVisitor.apply(cp).start().methodCalls().stream();
-                            }).
-                            map(s -> s + "\n").
-                            reduce(new StringBuilder(),
-                                    StringBuilder::append,
-                                    StringBuilder::append).toString();
+                        ClassParser cp = new ClassParser(arg, e.getName());
+                        return getClassVisitor.apply(cp).start().methodCalls().stream();
+                    }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
+                            .toString();
 
                     BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                     log.write(methodCalls);
                     log.close();
-                    File dir = null;
-                    dir = new File(System.getProperty("user.dir"));
-                    dir.mkdir();
-                    BufferedWriter writer = Files.newBufferedWriter(Paths.get("prueba"));
-                    CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Name", "Author", "Version", "Branch", "ComponentKey", "LanguageList", "MetricList"));
                     csvPrinter.printRecord(methodCalls);
-                    csvPrinter.close();
-                    writer.close();
-                    csvPrinter.flush();
                 }
             }
+            csvPrinter.close();
+            writer.close();
+            //csvPrinter.flush();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {
-        return StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(
-                        new Iterator<T>() {
-                            public T next() {
-                                return e.nextElement();
-                            }
+    public void createCSV() {
+        File dir = null;
+            dir = new File(System.getProperty("user.dir"));
+            dir.mkdir();
+            BufferedWriter writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
+            CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Name","Otro"));
+    }
 
-                            public boolean hasNext() {
-                                return e.hasMoreElements();
-                            }
-                        },
-                        Spliterator.ORDERED), false);
+    public static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new Iterator<T>() {
+            public T next() {
+                return e.nextElement();
+            }
+
+            public boolean hasNext() {
+                return e.hasMoreElements();
+            }
+        }, Spliterator.ORDERED), false);
     }
 }

@@ -17,6 +17,13 @@
       </includes>
       <scope>provided</scope>
     </dependencySet>
+    <dependencySet>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.apache.commons:commons-csv</include>
+      </includes>
+      <scope>provided</scope>
+    </dependencySet>
   </dependencySets>
   <fileSets>
     <fileSet>
