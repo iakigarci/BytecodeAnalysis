@@ -36,6 +36,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -58,7 +59,7 @@ import org.apache.bcel.classfile.ClassParser;
 public class JCallGraph {
 
     public static void main(String[] args) {
-
+        System.out.println("FICHERO FICHERO FICHERO"+Arrays.toString(args));
         Function<ClassParser, ClassVisitor> getClassVisitor = (ClassParser cp) -> {
             try {
                 return new ClassVisitor(cp.parse());
@@ -76,14 +77,13 @@ public class JCallGraph {
                 if (!f.exists()) {
                     System.err.println("Jar file " + arg + " does not exist");
                 }
-
                 try (JarFile jar = new JarFile(f)) {
                     Stream<JarEntry> entries = enumerationAsStream(jar.entries());
 
                     methodCalls = entries.flatMap(e -> {
                         if (e.isDirectory() || !e.getName().endsWith(".class")) 
                             return (new ArrayList<String>()).stream();
-
+                        System.out.println(e.getName());
                         ClassParser cp = new ClassParser(arg, e.getName());
                         return getClassVisitor.apply(cp).start().methodCalls().stream();
                     }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
@@ -108,7 +108,7 @@ public class JCallGraph {
         dir = new File(System.getProperty("user.dir"));
         dir.mkdir();
         BufferedWriter writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
-        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen","Desino"));
+        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen","Destino"));
         String[] splited = methodCalls.split(" ");
         for (int i = 0; i+2 < splited.length; i=i+2) {
             csvPrinter.printRecord(splited[i],splited[i+1]);
