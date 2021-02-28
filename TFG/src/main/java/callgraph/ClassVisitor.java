@@ -61,11 +61,13 @@ public class ClassVisitor extends EmptyVisitor {
         Method[] methods = jc.getMethods();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            DCManager.retrieveCalls(method, jc);
-            DCManager.linkCalls(method);
-            method.accept(this);
-
+            if (!method.getConstantPool().getConstant(8).toString().contains("java/util") && !method.getName().contains("init")) {
+                DCManager.retrieveCalls(method, jc);
+                DCManager.linkCalls(method);
+                method.accept(this);
+            }   
         }
+        System.out.println(DCManager.getDynamicCallers().toString());
     }
 
     public void visitConstantPool(ConstantPool constantPool) {
@@ -84,7 +86,8 @@ public class ClassVisitor extends EmptyVisitor {
     public void visitMethod(Method method) {
         MethodGen mg = new MethodGen(method, clazz.getClassName(), constants);
         MethodVisitor visitor = new MethodVisitor(mg, clazz);
-        methodCalls.addAll(visitor.start());
+            methodCalls.addAll(visitor.start());
+        
     }
 
     public ClassVisitor start() {
@@ -92,6 +95,9 @@ public class ClassVisitor extends EmptyVisitor {
         return this;
     }
 
+    public String getPackage() {
+        return clazz.getPackageName();
+    }
     public List<String> methodCalls() {
         return this.methodCalls;
     }

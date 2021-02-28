@@ -75,7 +75,7 @@ public class DynamicCallManager {
         }
         ConstantPool cp = method.getConstantPool();
         BootstrapMethod[] boots = getBootstrapMethods(jc);
-        String code = method.getCode().toString();
+        String code = method.getCode().toString(); // Obtiene los parametros max_locals, max_stack y code_length
         Matcher matcher = BOOTSTRAP_CALL_PATTERN.matcher(code);
         while (matcher.find()) {
             int bootIndex = Integer.parseInt(matcher.group(1));
@@ -83,7 +83,9 @@ public class DynamicCallManager {
             int calledIndex = bootMethod.getBootstrapArguments()[CALL_HANDLE_INDEX_ARGUMENT];
             String calledName = getMethodNameFromHandleIndex(cp, calledIndex);
             String callerName = method.getName();
-            dynamicCallers.put(calledName, callerName);
+            if (!calledName.contains("init") && !callerName.contains("init")) {
+                dynamicCallers.put(calledName, callerName);
+            }
         }
     }
 
@@ -106,11 +108,13 @@ public class DynamicCallManager {
         String methodName = ((ConstantUtf8) cp.getConstant(nameIndex)).getBytes();
         String linkedName = methodName;
         String callerName = methodName;
-        while (linkedName.matches("(lambda\\$)+null(\\$\\d+)+")) {
-            callerName = dynamicCallers.get(callerName);
-            linkedName = linkedName.replace("null", callerName);
+        if (!linkedName.contains("init") && !callerName.contains("init")  && !methodName.contains("init")) {
+            while (linkedName.matches("(lambda\\$)+null(\\$\\d+)+")) {
+                callerName = dynamicCallers.get(callerName);
+                linkedName = linkedName.replace("null", callerName);
+            }
+            cp.setConstant(nameIndex, new ConstantUtf8(linkedName));
         }
-        cp.setConstant(nameIndex, new ConstantUtf8(linkedName));
     }
 
     private BootstrapMethod[] getBootstrapMethods(JavaClass jc) {
@@ -120,5 +124,9 @@ public class DynamicCallManager {
             }
         }
         return new BootstrapMethod[]{};
+    }
+
+    public Map<String, String> getDynamicCallers() {
+        return dynamicCallers;
     }
 }

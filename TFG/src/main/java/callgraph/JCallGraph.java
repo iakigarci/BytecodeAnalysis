@@ -70,30 +70,31 @@ public class JCallGraph {
 
         try {
             String methodCalls = null;
-            for (String arg : args) {
 
-                File f = new File(arg);
+            File f = new File(args[0]);
+            String exclude = args[1];
+            if (!f.exists()) {
+                System.err.println("Jar file " + args[0] + " does not exist");
+            }
+            try (JarFile jar = new JarFile(f)) {
+                Stream<JarEntry> entries = enumerationAsStream(jar.entries());
 
-                if (!f.exists()) {
-                    System.err.println("Jar file " + arg + " does not exist");
-                }
-                try (JarFile jar = new JarFile(f)) {
-                    Stream<JarEntry> entries = enumerationAsStream(jar.entries());
-
-                    methodCalls = entries.flatMap(e -> {
-                        if (e.isDirectory() || !e.getName().endsWith(".class")) 
-                            return (new ArrayList<String>()).stream();
-                        System.out.println(e.getName());
-                        ClassParser cp = new ClassParser(arg, e.getName());
+                methodCalls = entries.flatMap(e -> {
+                    if (e.isDirectory() || !e.getName().endsWith(".class")) 
+                        return (new ArrayList<String>()).stream();
+                    //System.out.println(e.getName());
+                    ClassParser cp = new ClassParser(args[0], e.getName());
+                    if(!getClassVisitor.apply(cp).getPackage().equals(exclude)) {
                         return getClassVisitor.apply(cp).start().methodCalls().stream();
-                    }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
-                            .toString();
+                    }
+                    return null;
+                }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
+                        .toString();
 
-                    BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
-                    log.write(methodCalls);
-                    log.close();
-                    
-                }
+                BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
+                log.write(methodCalls);
+                log.close();
+                
             }
             createCSV(methodCalls);
             // csvPrinter.flush();

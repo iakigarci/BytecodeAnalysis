@@ -78,6 +78,11 @@ public class MethodVisitor extends EmptyVisitor {
             if (!visitInstruction(i))
                 i.accept(this);
         }
+        for(int i = 0; i < methodCalls.size(); i++) {
+            if (methodCalls.get(i).contains("init")) {
+                methodCalls.remove(i);
+            }
+        }
         return methodCalls;
     }
 
