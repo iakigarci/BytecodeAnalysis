@@ -108,14 +108,24 @@ public class JCallGraph {
         File dir = null;
         dir = new File(System.getProperty("user.dir"));
         dir.mkdir();
-        BufferedWriter writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
-        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen","Destino"));
-        String[] splited = methodCalls.split(" ");
-        for (int i = 0; i+2 < splited.length; i=i+2) {
-            csvPrinter.printRecord(splited[i],splited[i+1]);
+        BufferedWriter writer = null;
+        CSVPrinter csvPrinter = null;
+        try {
+            writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
+            csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen","Destino"));
+            String[] splited = methodCalls.split(" ");
+            for (int i = 0; i+2 < splited.length; i=i+2) {
+                csvPrinter.printRecord(splited[i],splited[i+1]);
+            }
+            
+        } catch (IOException e) {
+            System.err.println("Error while processing jar: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            csvPrinter.close();
+            writer.close();
         }
-        csvPrinter.close();
-        writer.close();
+        
     }
 
     public static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {
