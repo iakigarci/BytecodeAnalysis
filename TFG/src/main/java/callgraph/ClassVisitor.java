@@ -59,9 +59,11 @@ public class ClassVisitor extends EmptyVisitor {
     public void visitJavaClass(JavaClass jc) {
         jc.getConstantPool().accept(this);
         Method[] methods = jc.getMethods();
+        ArrayList<String> lPaquetes = JCallGraph.getlPaquetes();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            if (!method.getConstantPool().getConstant(8).toString().contains("java/util") && !method.getName().contains("init")) {
+            
+            if (method.getConstantPool().getConstant(2).toString().contains(lPaquetes.get(0))) {
                 DCManager.retrieveCalls(method, jc);
                 DCManager.linkCalls(method);
                 method.accept(this);
@@ -86,8 +88,7 @@ public class ClassVisitor extends EmptyVisitor {
     public void visitMethod(Method method) {
         MethodGen mg = new MethodGen(method, clazz.getClassName(), constants);
         MethodVisitor visitor = new MethodVisitor(mg, clazz);
-            methodCalls.addAll(visitor.start());
-        
+        methodCalls.addAll(visitor.start());   
     }
 
     public ClassVisitor start() {

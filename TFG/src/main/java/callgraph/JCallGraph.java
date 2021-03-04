@@ -58,8 +58,10 @@ import org.apache.bcel.classfile.ClassParser;
  */
 public class JCallGraph {
 
+    private static ArrayList<String> lPaquetes = new ArrayList<>();
+
     public static void main(String[] args) {
-        System.out.println("FICHERO FICHERO"+Arrays.toString(args));
+        System.out.println("FICHERO FICHERO" + Arrays.toString(args));
         Function<ClassParser, ClassVisitor> getClassVisitor = (ClassParser cp) -> {
             try {
                 return new ClassVisitor(cp.parse());
@@ -70,7 +72,7 @@ public class JCallGraph {
 
         try {
             String methodCalls = null;
-
+            lPaquetes.add("paquete");
             File f = new File(args[0]);
             String exclude = args[1];
             if (!f.exists()) {
@@ -90,13 +92,17 @@ public class JCallGraph {
                     return null;
                 }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
                         .toString();
-
+                System.out.println("VOY A IMPRIMIR");
+                System.out.println(methodCalls);
+                System.out.println("HE TERMINADO YYAYAYAYAYYAAYAYYAYYAYAY");
+                System.out.println();
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls);
                 log.close();
                 
             }
             createCSV(methodCalls);
+
             // csvPrinter.flush();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
@@ -139,4 +145,9 @@ public class JCallGraph {
             }
         }, Spliterator.ORDERED), false);
     }
+
+    public static ArrayList<String> getlPaquetes() {
+        return lPaquetes;
+    }
+
 }
