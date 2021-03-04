@@ -59,7 +59,7 @@ import org.apache.bcel.classfile.ClassParser;
 public class JCallGraph {
 
     public static void main(String[] args) {
-        System.out.println("FICHERO FICHERO FICHERO"+Arrays.toString(args));
+        System.out.println("FICHERO FICHERO"+Arrays.toString(args));
         Function<ClassParser, ClassVisitor> getClassVisitor = (ClassParser cp) -> {
             try {
                 return new ClassVisitor(cp.parse());

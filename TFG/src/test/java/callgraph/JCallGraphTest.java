@@ -9,6 +9,5 @@ public class JCallGraphTest {
         s[0] = "ProyectoAnalizar.jar";
         s[1] = "java.util";
         JCallGraph.main(s);
-        
     }
 }
