@@ -74,9 +74,8 @@ public class JCallGraph {
 
         try {
             String methodCalls = null;
-            lPaquetes.add("paquete");
+            lPaquetes.add(args[1]);
             File f = new File(args[0]);
-            String exclude = args[1];
             if (!f.exists()) {
                 System.err.println("Jar file " + args[0] + " does not exist");
             }
@@ -88,10 +87,7 @@ public class JCallGraph {
                         return (new ArrayList<String>()).stream();
                     //System.out.println(e.getName());
                     ClassParser cp = new ClassParser(args[0], e.getName());
-                    if(!getClassVisitor.apply(cp).getPackage().equals(exclude)) {
-                        return getClassVisitor.apply(cp).start().methodCalls().stream();
-                    }
-                    return null;
+                    return getClassVisitor.apply(cp).start().methodCalls().stream();
                 }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
                         .toString();
                 System.out.println();

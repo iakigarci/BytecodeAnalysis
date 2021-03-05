@@ -62,12 +62,11 @@ public class ClassVisitor extends EmptyVisitor {
         ArrayList<String> lPaquetes = JCallGraph.getlPaquetes();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            
-            if (method.getConstantPool().getConstant(2).toString().contains(lPaquetes.get(0))) {
+            String n = method.getName();
                 DCManager.retrieveCalls(method, jc);
                 DCManager.linkCalls(method);
                 method.accept(this);
-            }   
+            
         }
         System.out.println(DCManager.getDynamicCallers().toString());
     }

@@ -1,0 +1,84 @@
+@startuml components
+
+class JCallGraph {
+    List<String> lPaquetes;
+    +main(String[] args);
+    +createCSV(String methodCalls);
+    +isPackage(String methodName) : boolean
+    +isExactSubsecuence(String source, String subItem): boolean
+}
+
+class ClassVisitor{
+    JavaClass clazz;
+    ConstantPoolGen constants;
+    String classReferenceFormat;
+    final DynamicCallManager DCManager;
+    List<String> methodCalls;
+    +visitJavaClass(JavaClass jc);
+    +visitConstantPool(ConstantPool constantPool); 
+    +visitMethod(Method method);
+    +ClassVisitor start();
+    +visitConstantPool(ConstantPool constantPool);
+    +visitMethod(Method method);
+    +start() : ClassVisitor;
+    +methodCalls() : List<String>;
+}
+
+class DynamicCallManager {
+    Map<String, String> dynamicCallers;
+    +retrieveCalls(Method method, JavaClass jc);
+    +linkCalls(Method method);
+    +getDynamicCallers() : Map<String, String>;
+}
+
+class MethodVisitor {
+    JavaClass clazz;
+    ConstantPoolGen constants;
+    MethodGen mg;
+    ConstantPoolGen cp;
+    List<String> methodCalls;
+    +MethodVisitor(MethodGen m, JavaClass jc);
+    +argumentList(Type[] arguments): String;
+    +start() : List<String>;
+    +visitInstruction(Instruction i) : boolean;
+}
+
+package org.apache.bcel.generic {
+    abstract EmptyVisitor {
+
+    }
+}
+
+package org.apache.bcel {
+    class JavaClass {
+        -file_name;
+        -package_name;
+        -class_name;
+    }
+
+    class ConstantPoolGen {
+
+    }
+    class MethodGen {
+
+    }
+
+    class ConstantPool {
+
+    }
+}
+
+
+
+MethodVisitor -up-|> EmptyVisitor
+ClassVisitor -up-|> EmptyVisitor
+
+JCallGraph -right-> ClassVisitor
+ClassVisitor -down-> JavaClass
+ClassVisitor -down-> ConstantPoolGen
+ClassVisitor -down-> DynamicCallManager
+ClassVisitor -right-> MethodVisitor
+MethodVisitor -down-> JavaClass
+MethodVisitor -down-> ConstantPool
+MethodVisitor -down-> MethodGen
+@enduml

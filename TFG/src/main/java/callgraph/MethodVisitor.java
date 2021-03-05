@@ -101,7 +101,9 @@ public class MethodVisitor extends EmptyVisitor {
 
     @Override
     public void visitINVOKEINTERFACE(INVOKEINTERFACE i) {
-        methodCalls.add(String.format(format,"I",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
+        if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
+            methodCalls.add(String.format(format,"I",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
+        }
     }
 
     @Override

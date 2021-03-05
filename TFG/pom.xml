@@ -13,7 +13,13 @@
     <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+    <sonar.projectKey>iakigarci_TFG</sonar.projectKey>
+      <sonar.organization>iakigarci</sonar.organization>
+      <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+      
   </properties>
+
+  
 
   <dependencies>
 
@@ -121,18 +127,6 @@
     </plugins>
   </reporting>
   <profiles>
-    <profile>
-      <id>sonar</id>
-      <activation>
-          <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-          <!-- Optional URL to server. Default value is http://localhost:9000 -->
-          <sonar.host.url>
-            http://localhost:9000
-          </sonar.host.url>
-      </properties>
-    </profile>
     <!-- Publish coverage report to Coveralls, only when running in Travis. -->
     <profile>
       <id>travis</id>
