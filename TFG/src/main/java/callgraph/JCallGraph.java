@@ -44,6 +44,8 @@ import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.csv.CSVFormat;
@@ -61,7 +63,7 @@ public class JCallGraph {
     private static ArrayList<String> lPaquetes = new ArrayList<>();
 
     public static void main(String[] args) {
-        System.out.println("FICHERO FICHERO" + Arrays.toString(args));
+        System.out.println("FICHERO" + Arrays.toString(args));
         Function<ClassParser, ClassVisitor> getClassVisitor = (ClassParser cp) -> {
             try {
                 return new ClassVisitor(cp.parse());
@@ -92,9 +94,6 @@ public class JCallGraph {
                     return null;
                 }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
                         .toString();
-                System.out.println("VOY A IMPRIMIR");
-                System.out.println(methodCalls);
-                System.out.println("HE TERMINADO YYAYAYAYAYYAAYAYYAYYAYAY");
                 System.out.println();
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls);
@@ -150,4 +149,19 @@ public class JCallGraph {
         return lPaquetes;
     }
 
+    public static boolean isPackage(String methodName) {
+        for(String p : lPaquetes) {
+            if (isExactSubsecuence(methodName, p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isExactSubsecuence(String source, String subItem){
+        String pattern = "\\b"+subItem+"\\b";
+        Pattern p=Pattern.compile(pattern);
+        Matcher m=p.matcher(source);
+        return m.find();
+   }
 }

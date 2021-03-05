@@ -94,7 +94,7 @@ public class MethodVisitor extends EmptyVisitor {
 
     @Override
     public void visitINVOKEVIRTUAL(INVOKEVIRTUAL i) {
-        if(!i.getReferenceType(cp).toString().contains("java")) {
+        if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
             methodCalls.add(String.format(format,"M",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
         }
     }
@@ -111,7 +111,7 @@ public class MethodVisitor extends EmptyVisitor {
 
     @Override
     public void visitINVOKESTATIC(INVOKESTATIC i) {
-        if(!i.getReferenceType(cp).toString().contains("java")) {
+        if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
             methodCalls.add(String.format(format,"S",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
         }
     }    
