@@ -117,9 +117,10 @@ public class JCallGraph {
         try {
             writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
             csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen", "Destino"));
-            String[] splited = methodCalls.split(" ");
-            for (int i = 0; i + 2 < splited.length; i = i + 2) {
-                csvPrinter.printRecord(splited[i], splited[i + 1]);
+            String[] splited = methodCalls.split("\\r?\\n");
+            for (int i = 0; i < splited.length; i++) {
+                String[] str = splited[i].split(" ");
+                csvPrinter.printRecord(str[0], str[1]);
             }
 
         } catch (IOException e) {

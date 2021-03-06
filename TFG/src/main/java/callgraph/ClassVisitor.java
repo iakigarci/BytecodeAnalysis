@@ -64,7 +64,6 @@ public class ClassVisitor extends EmptyVisitor {
         Method[] methods = jc.getMethods();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            String n = method.getName();
             DCManager.retrieveCalls(method, jc);
             DCManager.linkCalls(method);
             method.accept(this);
