@@ -15,7 +15,7 @@ public class JCallGraphTest {
     void testMain2() {
         String[] s = new String[2];
         s[0] = "indaba_report.jar";
-        s[1] = "providers";
+        s[1] = "providers,exporters,factories";
         JCallGraph.main(s);
     }
 }

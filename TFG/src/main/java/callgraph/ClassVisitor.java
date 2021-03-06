@@ -52,6 +52,9 @@ public class ClassVisitor extends EmptyVisitor {
 
     public ClassVisitor(JavaClass jc) {
         clazz = jc;
+        if(JCallGraph.isPackage(clazz.getPackageName())) {
+
+        }
         constants = new ConstantPoolGen(clazz.getConstantPool());
         classReferenceFormat = "C:" + clazz.getClassName() + " %s";
     }
@@ -59,13 +62,12 @@ public class ClassVisitor extends EmptyVisitor {
     public void visitJavaClass(JavaClass jc) {
         jc.getConstantPool().accept(this);
         Method[] methods = jc.getMethods();
-        ArrayList<String> lPaquetes = JCallGraph.getlPaquetes();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
             String n = method.getName();
-                DCManager.retrieveCalls(method, jc);
-                DCManager.linkCalls(method);
-                method.accept(this);
+            DCManager.retrieveCalls(method, jc);
+            DCManager.linkCalls(method);
+            method.accept(this);
             
         }
         System.out.println(DCManager.getDynamicCallers().toString());

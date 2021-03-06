@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Function;
@@ -60,7 +61,7 @@ import org.apache.bcel.classfile.ClassParser;
  */
 public class JCallGraph {
 
-    private static ArrayList<String> lPaquetes = new ArrayList<>();
+    private static List<String> lPaquetes = null;
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
@@ -74,7 +75,8 @@ public class JCallGraph {
 
         try {
             String methodCalls = null;
-            lPaquetes.add(args[1]);
+            lPaquetes = new ArrayList<String>(Arrays.asList(args[1].split(",")));
+            System.out.println("PAQUETES: "+lPaquetes.toString());
             File f = new File(args[0]);
             if (!f.exists()) {
                 System.err.println("Jar file " + args[0] + " does not exist");
@@ -83,11 +85,14 @@ public class JCallGraph {
                 Stream<JarEntry> entries = enumerationAsStream(jar.entries());
 
                 methodCalls = entries.flatMap(e -> {
-                    if (e.isDirectory() || !e.getName().endsWith(".class")) 
+                    if ((e.isDirectory() || !e.getName().endsWith(".class"))) 
                         return (new ArrayList<String>()).stream();
-                    //System.out.println(e.getName());
-                    ClassParser cp = new ClassParser(args[0], e.getName());
-                    return getClassVisitor.apply(cp).start().methodCalls().stream();
+                    if(isPackage(e.getName())) {
+                        ClassParser cp = new ClassParser(args[0], e.getName());
+                        return getClassVisitor.apply(cp).start().methodCalls().stream();
+                    }else {
+                        return null;
+                    }
                 }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
                         .toString();
                 System.out.println();
@@ -141,13 +146,13 @@ public class JCallGraph {
         }, Spliterator.ORDERED), false);
     }
 
-    public static ArrayList<String> getlPaquetes() {
+    public static List<String> getlPaquetes() {
         return lPaquetes;
     }
 
-    public static boolean isPackage(String methodName) {
+    public static boolean isPackage(String name) {
         for(String p : lPaquetes) {
-            if (isExactSubsecuence(methodName, p)) {
+            if (isExactSubsecuence(name, p)) {
                 return true;
             }
         }

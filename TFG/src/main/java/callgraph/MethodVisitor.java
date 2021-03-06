@@ -69,7 +69,7 @@ public class MethodVisitor extends EmptyVisitor {
     }
 
     public List<String> start() {
-        ArrayList<String> lPaquetes = JCallGraph.getlPaquetes();
+        ArrayList<String> lPaquetes = (ArrayList<String>) JCallGraph.getlPaquetes();
         if (mg.getClassName().contains(lPaquetes.get(0)) && visitedClass.getClassName().contains(lPaquetes.get(0))) {
                 if (mg.isAbstract() || mg.isNative())
                 return Collections.emptyList();
