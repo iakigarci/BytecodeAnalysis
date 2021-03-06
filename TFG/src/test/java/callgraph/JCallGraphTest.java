@@ -13,9 +13,20 @@ public class JCallGraphTest {
 
     @Test
     void testMain2() {
-        String[] s = new String[2];
+        String[] s = new String[3];
         s[0] = "indaba_report.jar";
-        s[1] = "providers,exporters,factories";
+        s[1] = "config,js,tools,ws,configuration,models,utils,view,providers,exporters,factories";
+        s[2] = "sonarqube,apache,google,okhttp3";
+        JCallGraph.main(s);
+    }
+
+    @Test 
+
+    void testMain3() {
+        String[] s = new String[3];
+        s[0] = "indaba_report.jar";
+        s[1] = "ws";
+        s[2] = "sonarqube,apache,google,okhttp3";
         JCallGraph.main(s);
     }
 }

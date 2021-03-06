@@ -61,7 +61,8 @@ import org.apache.bcel.classfile.ClassParser;
  */
 public class JCallGraph {
 
-    private static List<String> lPaquetes = null;
+    private static List<String> lInclude = null;
+    private static List<String> lExclude = null;
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
@@ -75,31 +76,28 @@ public class JCallGraph {
 
         try {
             String methodCalls = null;
-            lPaquetes = new ArrayList<String>(Arrays.asList(args[1].split(",")));
-            System.out.println("PAQUETES: "+lPaquetes.toString());
+            lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
+            lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
             File f = new File(args[0]);
             if (!f.exists()) {
                 System.err.println("Jar file " + args[0] + " does not exist");
             }
             try (JarFile jar = new JarFile(f)) {
-                Stream<JarEntry> entries = enumerationAsStream(jar.entries());
-
+                Stream<JarEntry> entries = enumerationAsStream(jar.entries()); // All files from jar
                 methodCalls = entries.flatMap(e -> {
-                    if ((e.isDirectory() || !e.getName().endsWith(".class"))) 
+                    if (e.isDirectory() || !e.getName().endsWith(".class"))
                         return (new ArrayList<String>()).stream();
-                    if(isPackage(e.getName())) {
+                    if (isPackage(e.getName())) {
                         ClassParser cp = new ClassParser(args[0], e.getName());
                         return getClassVisitor.apply(cp).start().methodCalls().stream();
-                    }else {
+                    } else {
                         return null;
                     }
                 }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
                         .toString();
-                System.out.println();
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls);
                 log.close();
-                
             }
             createCSV(methodCalls);
 
@@ -118,12 +116,12 @@ public class JCallGraph {
         CSVPrinter csvPrinter = null;
         try {
             writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
-            csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen","Destino"));
+            csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen", "Destino"));
             String[] splited = methodCalls.split(" ");
-            for (int i = 0; i+2 < splited.length; i=i+2) {
-                csvPrinter.printRecord(splited[i],splited[i+1]);
+            for (int i = 0; i + 2 < splited.length; i = i + 2) {
+                csvPrinter.printRecord(splited[i], splited[i + 1]);
             }
-            
+
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
@@ -131,7 +129,7 @@ public class JCallGraph {
             csvPrinter.close();
             writer.close();
         }
-        
+
     }
 
     public static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {
@@ -146,23 +144,33 @@ public class JCallGraph {
         }, Spliterator.ORDERED), false);
     }
 
-    public static List<String> getlPaquetes() {
-        return lPaquetes;
+    public static List<String> getlInclude() {
+        return lInclude;
     }
 
     public static boolean isPackage(String name) {
-        for(String p : lPaquetes) {
-            if (isExactSubsecuence(name, p)) {
-                return true;
+        
+        for (String include : lInclude) {
+            if (isExactSubsecuence(name, include) ) {
+                boolean exit = false;
+                for(String exclude : lExclude) {
+                    if (isExactSubsecuence(name, exclude)) {
+                        exit = true;
+                        break;
+                    }
+                }
+                if (!exit) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    private static boolean isExactSubsecuence(String source, String subItem){
-        String pattern = "\\b"+subItem+"\\b";
-        Pattern p=Pattern.compile(pattern);
-        Matcher m=p.matcher(source);
+    private static boolean isExactSubsecuence(String source, String subItem) {
+        String pattern = "\\b" + subItem + "\\b";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(source);
         return m.find();
-   }
+    }
 }
