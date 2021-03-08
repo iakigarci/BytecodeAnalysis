@@ -47,6 +47,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.csv.CSVFormat;
@@ -93,8 +95,14 @@ public class JCallGraph {
                     } else {
                         return null;
                     }
-                }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
-                        .toString();
+                    })
+                    .map(s -> s + "\n")
+                    .reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
+                    .toString();
+                methodCalls = Arrays.asList(methodCalls.split("\\r?\\n")).
+                                    stream().
+                                    distinct().
+                                    collect(Collectors.joining("\n"));
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls);
                 log.close();
