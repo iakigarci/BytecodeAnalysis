@@ -152,21 +152,25 @@ public class JCallGraph {
 
     public static boolean isPackage(String name) {
         
-        for (String include : lInclude) {
-            if (isExactSubsecuence(name, include) ) {
-                boolean exit = false;
-                for(String exclude : lExclude) {
-                    if (isExactSubsecuence(name, exclude)) {
-                        exit = true;
-                        break;
+        if(lInclude.isEmpty() && lExclude.isEmpty()) {
+            return true;
+        }else{
+            for (String include : lInclude) {
+                if (isExactSubsecuence(name, include) ) {
+                    boolean exit = false;
+                    for(String exclude : lExclude) {
+                        if (isExactSubsecuence(name, exclude)) {
+                            exit = true;
+                            break;
+                        }
+                    }
+                    if (!exit) {
+                        return true;
                     }
                 }
-                if (!exit) {
-                    return true;
-                }
             }
+            return false;
         }
-        return false;
     }
 
     private static boolean isExactSubsecuence(String source, String subItem) {
