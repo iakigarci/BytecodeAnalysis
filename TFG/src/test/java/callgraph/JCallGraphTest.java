@@ -52,8 +52,8 @@ public class JCallGraphTest {
     void testMain6() {
         String[] s = new String[3];
         s[0] = "TFG-0.1.jar";
-        s[1] = ",";
-        s[2] = ",";
+        s[1] = "callgraph,util";
+        s[2] = "apache,";
         JCallGraph.main(s);
     }
 }

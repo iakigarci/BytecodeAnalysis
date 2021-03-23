@@ -47,6 +47,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.csv.CSVFormat;
@@ -75,7 +76,7 @@ public class JCallGraph {
         };
 
         try {
-            String methodCalls = null;
+            List<String> methodCalls = null;
             lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
             lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
             File f = new File(args[0]);
@@ -93,10 +94,9 @@ public class JCallGraph {
                     } else {
                         return null;
                     }
-                }).map(s -> s + "\n").reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
-                        .toString();
+                }).collect(Collectors.toList());
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
-                log.write(methodCalls);
+                log.write(methodCalls.toString());
                 log.close();
             }
             createCSV(methodCalls);
@@ -108,7 +108,7 @@ public class JCallGraph {
         }
     }
 
-    public static void createCSV(String methodCalls) throws IOException {
+    public static void createCSV(List<String> methodCalls) throws IOException {
         File dir = null;
         dir = new File(System.getProperty("user.dir"));
         dir.mkdir();
@@ -117,12 +117,12 @@ public class JCallGraph {
         try {
             writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
             csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen", "Resultado", "Destino"));
-            String[] splited = methodCalls.split("\\r?\\n");
-            for (int i = 0; i < splited.length; i++) {
-                String[] str = splited[i].split(" ");
+            for(String s : methodCalls) {
+                String[] str = s.split(" ");
                 String[] method = str[0].split("/");
                 csvPrinter.printRecord(method[0], method[1], str[1]);
             }
+            
 
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
