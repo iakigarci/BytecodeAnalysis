@@ -47,7 +47,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -103,13 +102,11 @@ public class JCallGraph {
                                     stream().
                                     distinct().
                                     collect(Collectors.joining("\n"));
-                BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
-                log.write(methodCalls);
-                log.close();
+                // BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
+                // log.write(methodCalls);
+                // log.close();
             }
             createCSV(methodCalls);
-
-            // csvPrinter.flush();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
