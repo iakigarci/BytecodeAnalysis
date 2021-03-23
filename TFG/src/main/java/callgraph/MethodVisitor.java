@@ -112,7 +112,9 @@ public class MethodVisitor extends EmptyVisitor {
 
     @Override
     public void visitINVOKESPECIAL(INVOKESPECIAL i) {
-        //methodCalls.add(String.format(format,"O",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
+        if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
+            methodCalls.add(String.format(format,"O",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
+        }
     }
 
     @Override
@@ -121,9 +123,11 @@ public class MethodVisitor extends EmptyVisitor {
             methodCalls.add(String.format(format,"S",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
         }
     }    
-    // @Override
-    // public void visitINVOKEDYNAMIC(INVOKEDYNAMIC i) {
-    //     methodCalls.add(String.format(format,"D",i.getType(cp),i.getMethodName(cp),
-    //             argumentList(i.getArgumentTypes(cp))));
-    // }
+    @Override
+    public void visitINVOKEDYNAMIC(INVOKEDYNAMIC i) {
+        if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
+            methodCalls.add(String.format(format,"D",i.getType(cp),i.getMethodName(cp),
+                argumentList(i.getArgumentTypes(cp))));
+        }
+    }
 }
