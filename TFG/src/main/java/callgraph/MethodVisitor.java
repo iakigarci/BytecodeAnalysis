@@ -53,13 +53,6 @@ public class MethodVisitor extends EmptyVisitor {
         visitedClass = jc;
         mg = m;
         cp = mg.getConstantPool();
-        int lines = mg.getLineNumbers().length - 1;
-        format = "M:" + visitedClass.getClassName() + 
-                ":" + mg.getName() + 
-                "(" + argumentList(mg.getArgumentTypes()) + ")" + 
-                "[" + lines + "]" + 
-                "/" + mg.getReturnType() + "/" + 
-                " " + "(%s)%s:%s(%s)";
     }
 
     private String argumentList(Type[] arguments) {
@@ -74,6 +67,15 @@ public class MethodVisitor extends EmptyVisitor {
     }
 
     public List<String> start() {
+        int lines = mg.getLineNumbers().length - 1;
+        format = "M:" +
+                mg.getName() + 
+                "(" + argumentList(mg.getArgumentTypes()) + ")" + "/" +
+                mg.getClassName() + "/" +
+                lines + "/" +
+                mg.getReturnType() + "/" + 
+                ((mg.getLineNumbers()[0].getSourceLine())-1) + "/" + 
+                " " + "(%s)%s:%s(%s)"; 
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
                 if (mg.isAbstract() || mg.isNative())
                 return Collections.emptyList();
@@ -85,7 +87,7 @@ public class MethodVisitor extends EmptyVisitor {
                 if (!visitInstruction(i))
                     i.accept(this);
             }
-        } 
+        }
         return methodCalls; // return the method call list by each method.
     }
 
@@ -129,5 +131,12 @@ public class MethodVisitor extends EmptyVisitor {
             methodCalls.add(String.format(format,"D",i.getType(cp),i.getMethodName(cp),
                 argumentList(i.getArgumentTypes(cp))));
         }
+    }
+
+    public boolean isVisitable() {
+        if (mg.isAbstract() || mg.isNative()) {
+            return false;
+        }
+        return true;
     }
 }

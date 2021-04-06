@@ -116,11 +116,11 @@ public class JCallGraph {
         CSVPrinter csvPrinter = null;
         try {
             writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
-            csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen", "Resultado", "Destino"));
+            csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Paquete", "LOC", "Resultado", "Linea en clase", "Destino"));
             for(String s : methodCalls) {
                 String[] str = s.split(" ");
                 String[] method = str[0].split("/");
-                csvPrinter.printRecord(method[0], method[1], str[1]);
+                csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4],str[1]);
             }
             
 

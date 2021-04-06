@@ -88,7 +88,9 @@ public class ClassVisitor extends EmptyVisitor {
     public void visitMethod(Method method) {
         MethodGen mg = new MethodGen(method, clazz.getClassName(), constants);
         MethodVisitor visitor = new MethodVisitor(mg, clazz);
-        methodCalls.addAll(visitor.start());   
+        if (visitor.isVisitable()) {
+            methodCalls.addAll(visitor.start());   
+        }
     }
 
     public ClassVisitor start() {
