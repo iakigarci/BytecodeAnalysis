@@ -94,24 +94,10 @@ public class JCallGraph {
                     } else {
                         return null;
                     }
-<<<<<<< HEAD
-                    })
-                    .map(s -> s + "\n")
-                    .reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
-                    .toString();
-                methodCalls = Arrays.asList(methodCalls.split("\\r?\\n")).
-                                    stream().
-                                    distinct().
-                                    collect(Collectors.joining("\n"));
-                // BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
-                // log.write(methodCalls);
-                // log.close();
-=======
                 }).collect(Collectors.toList());
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls.toString());
                 log.close();
->>>>>>> 41eead927a2cf3acbe7033e0a6d4f824e26ecb1f
             }
             createCSV(methodCalls);
         } catch (IOException e) {
@@ -128,11 +114,11 @@ public class JCallGraph {
         CSVPrinter csvPrinter = null;
         try {
             writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
-            csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Origen", "Resultado", "Destino"));
+            csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Paquete", "LOC", "Resultado", "Linea en clase", "Destino"));
             for(String s : methodCalls) {
                 String[] str = s.split(" ");
                 String[] method = str[0].split("/");
-                csvPrinter.printRecord(method[0], method[1], str[1]);
+                csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4],str[1]);
             }
             
 
