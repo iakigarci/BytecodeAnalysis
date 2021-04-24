@@ -67,7 +67,6 @@ public class ClassVisitor extends EmptyVisitor {
             DCManager.retrieveCalls(method, jc);
             DCManager.linkCalls(method);
             method.accept(this);
-            
         }
         System.out.println(DCManager.getDynamicCallers().toString());
     }

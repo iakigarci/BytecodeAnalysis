@@ -64,6 +64,8 @@ public class JCallGraph {
 
     private static List<String> lInclude = null;
     private static List<String> lExclude = null;
+    private GenericTree<MethodReport> tree = new GenericTree<>();
+    
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
@@ -76,6 +78,7 @@ public class JCallGraph {
         };
 
         try {
+            GenericTreeNode<MethodReport> root = new GenericTreeNode<>(new MethodReport());
             List<String> methodCalls = null;
             lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
             lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));

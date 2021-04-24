@@ -30,10 +30,12 @@
 package callgraph;
 
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 /**
  * The simplest of method visitors, prints any invoked method
