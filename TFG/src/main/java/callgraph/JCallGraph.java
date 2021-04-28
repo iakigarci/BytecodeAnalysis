@@ -38,16 +38,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.csv.CSVFormat;
@@ -65,6 +66,7 @@ public class JCallGraph {
     private static List<String> lInclude = null;
     private static List<String> lExclude = null;
     private GenericTree<MethodReport> tree = new GenericTree<>();
+    private static List<LinkedHashMap<MethodReport,List<MethodReport>>> methodCalls;
     
 
     public static void main(String[] args) {
@@ -78,8 +80,7 @@ public class JCallGraph {
         };
 
         try {
-            GenericTreeNode<MethodReport> root = new GenericTreeNode<>(new MethodReport());
-            List<String> methodCalls = null;
+            methodCalls = new ArrayList<LinkedHashMap<MethodReport,List<MethodReport>>>();
             lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
             lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
             File f = new File(args[0]);
@@ -88,26 +89,56 @@ public class JCallGraph {
             }
             try (JarFile jar = new JarFile(f)) {
                 Stream<JarEntry> entries = enumerationAsStream(jar.entries()); // All files from jar
-                methodCalls = entries.flatMap(e -> {
-                    if (e.isDirectory() || !e.getName().endsWith(".class"))
-                        return (new ArrayList<String>()).stream();
-                    if (isPackage(e.getName())) {
-                        ClassParser cp = new ClassParser(args[0], e.getName());
-                        return getClassVisitor.apply(cp).start().methodCalls().stream();
-                    } else {
-                        return null;
+                entries.forEach(e -> { 
+                    if (!e.isDirectory() && e.getName().endsWith(".class")) {
+                        if (isPackage(e.getName())) { 
+                            ClassParser cp = new ClassParser(args[0], e.getName());
+                            LinkedHashMap<MethodReport,List<MethodReport>> map = getClassVisitor.apply(cp).start().methodCalls();
+                            if(map!=null){
+                                methodCalls.add(map);
+                            }
+                        }
                     }
-                }).collect(Collectors.toList());
+                });
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls.toString());
                 log.close();
             }
-            createCSV(methodCalls);
+            //createCSV(methodCalls);
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+    public static void createTree() {
+        GenericTree<MethodReport> tree = new GenericTree<>();
+        GenericTreeNode<MethodReport> root = new GenericTreeNode<>(new MethodReport());
+        tree.setRoot(root);
+        boolean exit = false;
+        for(LinkedHashMap<MethodReport,List<MethodReport>> map : methodCalls) {
+            // Se recorren todas las clases analizadas
+            Entry<MethodReport, List<MethodReport>> init = map.entrySet().iterator().next();
+            GenericTreeNode<MethodReport> child = new GenericTreeNode<>(init.getKey());
+            for(MethodReport m : init.getValue()) { // hijos del init
+                GenericTreeNode<MethodReport> childAux = new GenericTreeNode<>(m);
+                while(!exit) {
+                    if (map.get(m)==null) {
+                        exit=true;
+                    } else {
+                        for(MethodReport mAux : map.get(m)) {
+
+                        } 
+                    }
+                }
+                exit = false;
+                child.addChild(childAux);
+            }
+            root.addChild(child); // El arbol tiene ya el init, colgando de root.
+
+        }
+    }
+
 
     public static void createCSV(List<String> methodCalls) throws IOException {
         File dir = null;

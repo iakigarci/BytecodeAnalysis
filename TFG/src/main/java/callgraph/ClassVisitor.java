@@ -36,6 +36,8 @@ import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.MethodGen;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -48,7 +50,7 @@ public class ClassVisitor extends EmptyVisitor {
     private ConstantPoolGen constants;
     private String classReferenceFormat;
     private final DynamicCallManager DCManager = new DynamicCallManager();
-    private List<String> methodCalls = new ArrayList<>();
+    private LinkedHashMap<MethodReport,List<MethodReport>> methodCalls = new LinkedHashMap<>();
 
     public ClassVisitor(JavaClass jc) {
         clazz = jc;
@@ -88,7 +90,7 @@ public class ClassVisitor extends EmptyVisitor {
         MethodGen mg = new MethodGen(method, clazz.getClassName(), constants);
         MethodVisitor visitor = new MethodVisitor(mg, clazz);
         if (visitor.isVisitable()) {
-            methodCalls.addAll(visitor.start());   
+            methodCalls.putAll(visitor.start());
         }
     }
 
@@ -100,7 +102,7 @@ public class ClassVisitor extends EmptyVisitor {
     public String getPackage() {
         return clazz.getPackageName();
     }
-    public List<String> methodCalls() {
+    public LinkedHashMap<MethodReport, List<MethodReport>> methodCalls() {
         return this.methodCalls;
     }
 }
