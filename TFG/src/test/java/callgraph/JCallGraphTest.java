@@ -6,9 +6,9 @@ public class JCallGraphTest {
     @Test
     void testMain() {
         String[] s = new String[3];
-        s[0] = "ProyectoAnalizar.jar";
-        s[1] = "paquete";
-        s[2] = ",";
+        s[0] = "ProyectoAnalizar.jar"; // JAR
+        s[1] = "paquete";              // Include list
+        s[2] = ",";                    // Exclude list
         JCallGraph.main(s);
     }
 

@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -67,7 +68,8 @@ public class JCallGraph {
     private static List<String> lExclude = null;
     private GenericTree<MethodReport> tree = new GenericTree<>();
     private static List<LinkedHashMap<MethodReport,List<MethodReport>>> methodCalls;
-    
+    private static CSVPrinter csvPrinter = null;
+
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
@@ -104,7 +106,7 @@ public class JCallGraph {
                 log.write(methodCalls.toString());
                 log.close();
             }
-            //createCSV(methodCalls);
+            createCSV2();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
@@ -136,6 +138,46 @@ public class JCallGraph {
             }
             root.addChild(child); // El arbol tiene ya el init, colgando de root.
 
+        }
+    }
+
+    public static void createCSV2() throws IOException {
+        File dir = null;
+        dir = new File(System.getProperty("user.dir"));
+        dir.mkdir();
+        BufferedWriter writer = null;
+        boolean exit = false;
+        try {
+            for(LinkedHashMap<MethodReport,List<MethodReport>> map : methodCalls) {
+                Entry<MethodReport, List<MethodReport>> init = map.entrySet().iterator().next();
+                String name = "/csv/" +init.getKey().getPaquete() + ".csv";
+                writer = Files.newBufferedWriter(Paths.get(name));
+                csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "Resultado", "Linea en clase", "Llamado por"));
+
+                // Print INIT
+                csvPrinter.printRecord(init.getKey().getNombre(),-1, init.getKey().getLOC(), init.getKey().getResultado(), init.getKey().getLineaClase(),"");
+
+                // Recorrer hijos
+                for(MethodReport method : init.getValue()) { 
+                    csvPrinter.printRecord(method.getNombre(),0, method.getLOC(), method.getResultado(), method.getLineaClase(),"");
+                    printHijos(method, map);
+                }
+                //csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4],str[1]);
+                csvPrinter.close();
+                writer.close();
+            }   
+        } catch (IOException e) {
+            System.err.println("Error while processing jar: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static void printHijos(MethodReport method, LinkedHashMap<MethodReport, List<MethodReport>> map) throws IOException {
+        if (map.containsKey(method)) {
+            for(MethodReport aux : map.get(method)) {
+                csvPrinter.printRecord(aux.getNombre(),0, aux.getLOC(), aux.getResultado(), aux.getLineaClase(),"");
+                printHijos(aux,map);
+            }
         }
     }
 
