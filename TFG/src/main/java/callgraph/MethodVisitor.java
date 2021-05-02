@@ -72,6 +72,8 @@ public class MethodVisitor extends EmptyVisitor {
         int lines = mg.getLineNumbers().length - 1;
         int lineaClase = (mg.getLineNumbers()[0].getSourceLine())-1;
         method = new MethodReport(mg.getName(),mg.getClassName(),lines,mg.getReturnType().toString(),lineaClase,"A");
+        CalledFromList cfl =  CalledFromList.getCalledfromlist();
+        cfl.add(method);
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
                 if (mg.isAbstract() || mg.isNative())
                 return (HashMap<MethodReport, List<MethodReport>>) Collections.emptyList();
@@ -99,34 +101,37 @@ public class MethodVisitor extends EmptyVisitor {
     @Override
     public void visitINVOKEVIRTUAL(INVOKEVIRTUAL i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getReferenceType(cp).toString(),i.getMethodName(cp),0,"a",0,"M"));
+            MethodReport m = new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"M");
+            CalledFromList cfl =  CalledFromList.getCalledfromlist();
+            cfl.addToList(method,m);
+            methodCalls.add(m);
         }
     }
 
     @Override
     public void visitINVOKEINTERFACE(INVOKEINTERFACE i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getReferenceType(cp).toString(),i.getMethodName(cp),0,"a",0,"I"));
+            methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"I"));
         }
     }
 
     @Override
     public void visitINVOKESPECIAL(INVOKESPECIAL i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getReferenceType(cp).toString(),i.getMethodName(cp),0,"a",0,"O"));
+            methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"O"));
         }
     }
 
     @Override
     public void visitINVOKESTATIC(INVOKESTATIC i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getReferenceType(cp).toString(),i.getMethodName(cp),0,"a",0,"S"));
+            methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"S"));
         }
     }    
     @Override
     public void visitINVOKEDYNAMIC(INVOKEDYNAMIC i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getReferenceType(cp).toString(),i.getMethodName(cp),0,"a",0,"D"));
+            methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"D"));
         }
     }
 

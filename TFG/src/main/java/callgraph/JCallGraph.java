@@ -30,6 +30,7 @@ package callgraph;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
@@ -102,6 +103,7 @@ public class JCallGraph {
                         }
                     }
                 });
+                CalledFromList cfl = CalledFromList.getCalledfromlist();
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls.toString());
                 log.close();
@@ -143,28 +145,30 @@ public class JCallGraph {
 
     public static void createCSV2() throws IOException {
         File dir = null;
-        dir = new File(System.getProperty("user.dir"));
+        dir = new File(System.getProperty("user.dir")+"/csv/");
         dir.mkdir();
         BufferedWriter writer = null;
-        boolean exit = false;
+        FileWriter fileWriter = null;
         try {
             for(LinkedHashMap<MethodReport,List<MethodReport>> map : methodCalls) {
-                Entry<MethodReport, List<MethodReport>> init = map.entrySet().iterator().next();
-                String name = "/csv/" +init.getKey().getPaquete() + ".csv";
-                writer = Files.newBufferedWriter(Paths.get(name));
-                csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "Resultado", "Linea en clase", "Llamado por"));
+                if (map.entrySet().iterator().hasNext()) {
+                    Entry<MethodReport, List<MethodReport>> init = map.entrySet().iterator().next();
+                    String name = "/"+init.getKey().getPaquete() + ".csv";
+                    fileWriter = new FileWriter(dir+name);
+                    writer = new BufferedWriter(fileWriter);
+                    csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "Resultado", "Linea en clase", "Llamado por"));
 
-                // Print INIT
-                csvPrinter.printRecord(init.getKey().getNombre(),-1, init.getKey().getLOC(), init.getKey().getResultado(), init.getKey().getLineaClase(),"");
+                    // Print INIT
+                    csvPrinter.printRecord(init.getKey().getNombre(),-1, init.getKey().getLOC(), init.getKey().getResultado(), init.getKey().getLineaClase(),"");
 
-                // Recorrer hijos
-                for(MethodReport method : init.getValue()) { 
-                    csvPrinter.printRecord(method.getNombre(),0, method.getLOC(), method.getResultado(), method.getLineaClase(),"");
-                    printHijos(method, map);
+                    // Recorrer hijos
+                    for(MethodReport method : init.getValue()) { 
+                        printHijos(method, map,0);
+                    }
+                    //csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4],str[1]);
+                    csvPrinter.close();
+                    writer.close();
                 }
-                //csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4],str[1]);
-                csvPrinter.close();
-                writer.close();
             }   
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
@@ -172,11 +176,12 @@ public class JCallGraph {
         }
     }
 
-    public static void printHijos(MethodReport method, LinkedHashMap<MethodReport, List<MethodReport>> map) throws IOException {
+    public static void printHijos(MethodReport method, LinkedHashMap<MethodReport, List<MethodReport>> map, int level) throws IOException {
         if (map.containsKey(method)) {
+            csvPrinter.printRecord(method.getNombre(),level, method.getLOC(), method.getResultado(), method.getLineaClase(),"");
             for(MethodReport aux : map.get(method)) {
-                csvPrinter.printRecord(aux.getNombre(),0, aux.getLOC(), aux.getResultado(), aux.getLineaClase(),"");
-                printHijos(aux,map);
+                map.remove(method);
+                printHijos(aux,map,level+1);
             }
         }
     }

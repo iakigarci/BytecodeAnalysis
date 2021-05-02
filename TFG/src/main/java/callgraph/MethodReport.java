@@ -1,5 +1,7 @@
 package callgraph;
 
+import java.util.Objects;
+
 public class MethodReport {
     private String nombre;
     private String paquete;
@@ -9,7 +11,7 @@ public class MethodReport {
     private String tipo;
 
     public MethodReport() {
-        
+
     }
 
     public MethodReport(String nombre, String paquete, int lOC, String resultado, int lineaClase, String tipo) {
@@ -21,6 +23,9 @@ public class MethodReport {
         this.tipo = tipo;
     }
 
+    public MethodReport(String nombre) {
+        nombre = nombre;
+    }
 
     public String getNombre() {
         return nombre;
@@ -60,5 +65,22 @@ public class MethodReport {
 
     public void setLineaClase(int lineaClase) {
         this.lineaClase = lineaClase;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof MethodReport)) {
+            return false;
+        }
+        MethodReport m = (MethodReport) obj;
+        return this.nombre.equals(m.getNombre());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.nombre);
     }
 }

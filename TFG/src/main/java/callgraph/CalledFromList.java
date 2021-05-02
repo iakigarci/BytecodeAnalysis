@@ -1,0 +1,37 @@
+package callgraph;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class CalledFromList {
+    private Map<MethodReport,List<MethodReport>> calledMap;
+    private static CalledFromList calledFromList = null;
+    
+    private CalledFromList() {
+        calledMap = new HashMap<>();
+    }
+
+    public Map<MethodReport, List<MethodReport>> getCalledMap() {
+        return calledMap;
+    }
+
+    public static CalledFromList getCalledfromlist() {
+        if (calledFromList == null) {
+            calledFromList = new CalledFromList();
+        }
+        return calledFromList;
+    }
+    
+    public void add(MethodReport method) {
+        calledMap.put(method, new ArrayList<MethodReport>());
+    }
+
+    public void addToList(MethodReport key, MethodReport val) {
+        List<MethodReport> l = calledMap.get(key);
+        l.add(val);
+        calledMap.put(key, l);
+    }
+}
+
