@@ -83,4 +83,9 @@ public class MethodReport {
     public int hashCode() {
         return Objects.hash(this.nombre);
     }
+
+    @Override
+    public String toString() {
+        return this.paquete+this.nombre;
+    }
 }

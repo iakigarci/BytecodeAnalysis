@@ -72,8 +72,6 @@ public class MethodVisitor extends EmptyVisitor {
         int lines = mg.getLineNumbers().length - 1;
         int lineaClase = (mg.getLineNumbers()[0].getSourceLine())-1;
         method = new MethodReport(mg.getName(),mg.getClassName(),lines,mg.getReturnType().toString(),lineaClase,"A");
-        CalledFromList cfl =  CalledFromList.getCalledfromlist();
-        cfl.add(method);
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
                 if (mg.isAbstract() || mg.isNative())
                 return (HashMap<MethodReport, List<MethodReport>>) Collections.emptyList();
@@ -103,7 +101,7 @@ public class MethodVisitor extends EmptyVisitor {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
             MethodReport m = new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"M");
             CalledFromList cfl =  CalledFromList.getCalledfromlist();
-            cfl.addToList(method,m);
+            cfl.addToList(m,method);
             methodCalls.add(m);
         }
     }

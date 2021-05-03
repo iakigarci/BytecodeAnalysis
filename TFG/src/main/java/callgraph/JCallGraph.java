@@ -177,8 +177,13 @@ public class JCallGraph {
     }
 
     public static void printHijos(MethodReport method, LinkedHashMap<MethodReport, List<MethodReport>> map, int level) throws IOException {
+        CalledFromList cfl = CalledFromList.getCalledfromlist();
+        String calledFrom = "";
         if (map.containsKey(method)) {
-            csvPrinter.printRecord(method.getNombre(),level, method.getLOC(), method.getResultado(), method.getLineaClase(),"");
+            if (cfl.getCalledMap().containsKey(method)) {
+                calledFrom = cfl.getCalledMap().get(method).toString();
+            }
+            csvPrinter.printRecord(method.getNombre(),level, method.getLOC(), method.getResultado(), method.getLineaClase(),calledFrom);
             for(MethodReport aux : map.get(method)) {
                 map.remove(method);
                 printHijos(aux,map,level+1);
