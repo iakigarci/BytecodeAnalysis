@@ -35,7 +35,7 @@ public class JCallGraphTest {
         String[] s = new String[3];
         s[0] = "ProyectoAnalizarExtendido.jar";
         s[1] = "paquete";
-        s[2] = ",";
+        s[2] = "*,";
         JCallGraph.main(s);
     }
 

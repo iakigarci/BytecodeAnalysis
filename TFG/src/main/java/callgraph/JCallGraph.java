@@ -235,8 +235,9 @@ public class JCallGraph {
     }
 
     public static boolean isPackage(String name) {
-        
-        if(lInclude.isEmpty() && lExclude.isEmpty()) {
+        if (lExclude.get(0).equals("*")) {
+            return isExactSubsecuence(name, lInclude.get(0));
+        } else if(lInclude.isEmpty() && lExclude.isEmpty()) {
             return true;
         }else{
             for (String include : lInclude) {
