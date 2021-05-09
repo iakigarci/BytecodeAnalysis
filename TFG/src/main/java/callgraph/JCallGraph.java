@@ -40,9 +40,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.Map.Entry;
@@ -68,7 +71,8 @@ public class JCallGraph {
     private static List<String> lInclude = null;
     private static List<String> lExclude = null;
     private GenericTree<MethodReport> tree = new GenericTree<>();
-    private static List<LinkedHashMap<MethodReport,List<MethodReport>>> methodCalls;
+    private static List<HashMap<MethodReport,List<MethodReport>>> methodCalls;
+    private static List<MethodReport> visitedMethods = new ArrayList<MethodReport>();
     private static CSVPrinter csvPrinter = null;
 
 
@@ -83,7 +87,7 @@ public class JCallGraph {
         };
 
         try {
-            methodCalls = new ArrayList<LinkedHashMap<MethodReport,List<MethodReport>>>();
+            methodCalls = new ArrayList<HashMap<MethodReport,List<MethodReport>>>();
             lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
             lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
             File f = new File(args[0]);
@@ -96,7 +100,7 @@ public class JCallGraph {
                     if (!e.isDirectory() && e.getName().endsWith(".class")) {
                         if (isPackage(e.getName())) { 
                             ClassParser cp = new ClassParser(args[0], e.getName());
-                            LinkedHashMap<MethodReport,List<MethodReport>> map = getClassVisitor.apply(cp).start().methodCalls();
+                            HashMap<MethodReport,List<MethodReport>> map = getClassVisitor.apply(cp).start().methodCalls();
                             if(map!=null){
                                 methodCalls.add(map);
                             }
@@ -120,7 +124,7 @@ public class JCallGraph {
         GenericTreeNode<MethodReport> root = new GenericTreeNode<>(new MethodReport());
         tree.setRoot(root);
         boolean exit = false;
-        for(LinkedHashMap<MethodReport,List<MethodReport>> map : methodCalls) {
+        for(HashMap<MethodReport,List<MethodReport>> map : methodCalls) {
             // Se recorren todas las clases analizadas
             Entry<MethodReport, List<MethodReport>> init = map.entrySet().iterator().next();
             GenericTreeNode<MethodReport> child = new GenericTreeNode<>(init.getKey());
@@ -150,22 +154,26 @@ public class JCallGraph {
         BufferedWriter writer = null;
         FileWriter fileWriter = null;
         try {
-            for(LinkedHashMap<MethodReport,List<MethodReport>> map : methodCalls) {
-                if (map.entrySet().iterator().hasNext()) {
-                    Entry<MethodReport, List<MethodReport>> init = map.entrySet().iterator().next();
-                    String name = "/"+init.getKey().getPaquete() + ".csv";
+            for(HashMap<MethodReport,List<MethodReport>> map : methodCalls) { // Recorrer .class
+                Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
+                if (!entrySet.isEmpty()) {
+                    // MethodReport f = (MethodReport) map.keySet().toArray()[0];
+                    String name = "/"+ entrySet.iterator().next().getKey().getPaquete() + ".csv";
                     fileWriter = new FileWriter(dir+name);
                     writer = new BufferedWriter(fileWriter);
                     csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "Resultado", "Linea en clase", "Llamado por"));
-
-                    // Print INIT
-                    csvPrinter.printRecord(init.getKey().getNombre(),-1, init.getKey().getLOC(), init.getKey().getResultado(), init.getKey().getLineaClase(),"");
-
-                    // Recorrer hijos
-                    for(MethodReport method : init.getValue()) { 
-                        printHijos(method, map,0);
+                    for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+                        if (isZeroLelel(map, entry.getKey())) {
+                            csvPrinter.printRecord(entry.getKey().getNombre(),0, entry.getKey().getLOC(), entry.getKey().getResultado(), entry.getKey().getLineaClase(),"");
+                            // Recorrer hijos
+                            for(MethodReport method : entry.getValue()) {
+                                if (map.get(method) != null) {
+                                    visitedMethods.clear();
+                                    printHijos(method, new HashMap<>(map),1);
+                                }
+                            }
+                        }
                     }
-                    //csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4],str[1]);
                     csvPrinter.close();
                     writer.close();
                 }
@@ -176,21 +184,20 @@ public class JCallGraph {
         }
     }
 
-    public static void printHijos(MethodReport method, LinkedHashMap<MethodReport, List<MethodReport>> map, int level) throws IOException {
+    public static void printHijos(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level) throws IOException {
         CalledFromList cfl = CalledFromList.getCalledfromlist();
         String calledFrom = "";
-        if (map.containsKey(method)) {
+        if (!visitedMethods.contains(method)) {
+            visitedMethods.add(method);
             if (cfl.getCalledMap().containsKey(method)) {
                 calledFrom = cfl.getCalledMap().get(method).toString();
             }
             csvPrinter.printRecord(method.getNombre(),level, method.getLOC(), method.getResultado(), method.getLineaClase(),calledFrom);
             for(MethodReport aux : map.get(method)) {
-                map.remove(method);
                 printHijos(aux,map,level+1);
             }
         }
     }
-
 
     public static void createCSV(List<String> methodCalls) throws IOException {
         File dir = null;
@@ -258,10 +265,20 @@ public class JCallGraph {
         }
     }
 
-    private static boolean isExactSubsecuence(String source, String subItem) {
+
+    public static boolean isExactSubsecuence(String source, String subItem) {
         String pattern = "\\b" + subItem + "\\b";
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(source);
         return m.find();
+    }
+
+    private static boolean isZeroLelel(HashMap<MethodReport, List<MethodReport>> map, MethodReport m) {
+        for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+            if (entry.getValue().contains(m)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

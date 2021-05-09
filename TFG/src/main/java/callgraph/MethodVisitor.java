@@ -99,37 +99,47 @@ public class MethodVisitor extends EmptyVisitor {
     @Override
     public void visitINVOKEVIRTUAL(INVOKEVIRTUAL i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            MethodReport m = new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"M");
-            CalledFromList cfl =  CalledFromList.getCalledfromlist();
-            cfl.addToList(m,method);
-            methodCalls.add(m);
+            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                MethodReport m = new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"M");
+                CalledFromList cfl =  CalledFromList.getCalledfromlist();
+                cfl.addToList(m,method);
+                methodCalls.add(m);
+            }
         }
     }
 
     @Override
     public void visitINVOKEINTERFACE(INVOKEINTERFACE i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"I"));
+            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"I"));
+            }
         }
     }
 
     @Override
     public void visitINVOKESPECIAL(INVOKESPECIAL i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"O"));
+            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"O"));
+            }
         }
     }
 
     @Override
     public void visitINVOKESTATIC(INVOKESTATIC i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"S"));
+            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"S"));
+            }
         }
     }    
     @Override
     public void visitINVOKEDYNAMIC(INVOKEDYNAMIC i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"D"));
+            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                methodCalls.add(new MethodReport(i.getMethodName(cp),i.getReferenceType(cp).toString(),0,"a",0,"D"));
+            }
         }
     }
 

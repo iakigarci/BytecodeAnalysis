@@ -50,7 +50,7 @@ public class ClassVisitor extends EmptyVisitor {
     private ConstantPoolGen constants;
     private String classReferenceFormat;
     private final DynamicCallManager DCManager = new DynamicCallManager();
-    private LinkedHashMap<MethodReport,List<MethodReport>> methodCalls = new LinkedHashMap<>();
+    private HashMap<MethodReport,List<MethodReport>> methodCalls = new LinkedHashMap<>();
 
     public ClassVisitor(JavaClass jc) {
         clazz = jc;
@@ -102,7 +102,7 @@ public class ClassVisitor extends EmptyVisitor {
     public String getPackage() {
         return clazz.getPackageName();
     }
-    public LinkedHashMap<MethodReport, List<MethodReport>> methodCalls() {
+    public HashMap<MethodReport, List<MethodReport>> methodCalls() {
         return this.methodCalls;
     }
 }
