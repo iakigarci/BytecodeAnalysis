@@ -36,6 +36,7 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +59,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.codehaus.plexus.util.FileUtils;
 import org.apache.bcel.classfile.ClassParser;
 
 /**
@@ -149,7 +151,12 @@ public class JCallGraph {
 
     public static void createCSV2() throws IOException {
         File dir = null;
-        dir = new File(System.getProperty("user.dir")+"/csv/");
+        String dirName = System.getProperty("user.dir")+"/csv/";
+        Path path = Paths.get(dirName);
+        if (Files.exists(path)) {
+            Files.delete(path);
+        }
+        dir = new File(dirName);
         dir.mkdir();
         BufferedWriter writer = null;
         FileWriter fileWriter = null;
