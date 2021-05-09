@@ -153,10 +153,10 @@ public class JCallGraph {
         File dir = null;
         String dirName = System.getProperty("user.dir")+"/csv/";
         Path path = Paths.get(dirName);
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
         dir = new File(dirName);
+        if (Files.exists(path)) {
+            FileUtils.deleteDirectory(dir);
+        }
         dir.mkdir();
         BufferedWriter writer = null;
         FileWriter fileWriter = null;

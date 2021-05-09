@@ -1,0 +1,4 @@
+Nombre,Nivel,LOC,Resultado,Linea en clase,Llamado por
+<init>,0,3,void,8,
+getList,0,0,java.util.ArrayList,14,
+toString,0,1,java.lang.String,19,
