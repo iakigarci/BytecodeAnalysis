@@ -51,6 +51,7 @@ public class ClassVisitor extends EmptyVisitor {
     private String classReferenceFormat;
     private final DynamicCallManager DCManager = new DynamicCallManager();
     private HashMap<MethodReport,List<MethodReport>> methodCalls = new LinkedHashMap<>();
+    private List<MethodGen> methodGenList = new ArrayList<>();
 
     public ClassVisitor(JavaClass jc) {
         clazz = jc;
@@ -88,7 +89,7 @@ public class ClassVisitor extends EmptyVisitor {
 
     public void visitMethod(Method method) {
         MethodGen mg = new MethodGen(method, clazz.getClassName(), constants);
-        MethodVisitor visitor = new MethodVisitor(mg, clazz);
+        MethodVisitor visitor = new MethodVisitor(mg, clazz,constants);
         if (visitor.isVisitable()) {
             methodCalls.putAll(visitor.start());
         }
@@ -105,4 +106,22 @@ public class ClassVisitor extends EmptyVisitor {
     public HashMap<MethodReport, List<MethodReport>> methodCalls() {
         return this.methodCalls;
     }
+    
+    public List<MethodGen> getMethodGenList() {
+        return methodGenList;
+    }
+
+    public void setMethodGenList(List<MethodGen> methodGenList) {
+        this.methodGenList = methodGenList;
+    }
+
+    public MethodGen getMethodGen(String nombre) {
+        for(MethodGen mg : methodGenList) {
+            if (mg.getName().contains(nombre)) {
+                return mg;
+            }
+        }
+        return null;
+    }
 }
+

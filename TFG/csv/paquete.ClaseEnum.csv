@@ -1,7 +1,7 @@
 Nombre,Nivel,LOC,Resultado,Linea en clase,Llamado por
 <clinit>,0,3,void,3,
-<init>,1,0,a,0,
-<init>,1,0,a,0,
-<init>,1,0,a,0,
+<init>,1,0,void,2,[paquete.Tercero<init>]
+<init>,1,0,void,2,[paquete.Tercero<init>]
+<init>,1,0,void,2,[paquete.Tercero<init>]
 values,0,0,paquete.ClaseEnum[],0,
 valueOf,0,0,paquete.ClaseEnum,0,
