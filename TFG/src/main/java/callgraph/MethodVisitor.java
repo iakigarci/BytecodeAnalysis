@@ -103,10 +103,14 @@ public class MethodVisitor extends EmptyVisitor {
     public void visitINVOKEVIRTUAL(INVOKEVIRTUAL i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
             if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
-                MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
-                CalledFromList cfl =  CalledFromList.getCalledfromlist();
-                cfl.addToList(m,method);
-                methodCalls.add(m);
+                Method methodAux = this.getMethod(i.getMethodName(cp));
+                if (methodAux!=null) {
+                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
+                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
+                    cfl.addToList(m,method);
+                    methodCalls.add(m);
+                }
             }
         }
     }
@@ -115,9 +119,14 @@ public class MethodVisitor extends EmptyVisitor {
     public void visitINVOKEINTERFACE(INVOKEINTERFACE i) { // metodo que se visita desde mg
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
             if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
-                Method method = this.getMethod(i.getMethodName(cp));
-                MethodGen mg = new MethodGen(method, visitedClass.getClassName(), constants);
-                methodCalls.add( new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A"));
+                Method methodAux = this.getMethod(i.getMethodName(cp));
+                if (methodAux!=null) {
+                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
+                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
+                    cfl.addToList(m,method);
+                    methodCalls.add(m);
+                }
             }
         }
     }
@@ -126,9 +135,14 @@ public class MethodVisitor extends EmptyVisitor {
     public void visitINVOKESPECIAL(INVOKESPECIAL i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
             if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
-                Method method = this.getMethod(i.getMethodName(cp));
-                MethodGen mg = new MethodGen(method, visitedClass.getClassName(), constants);
-                methodCalls.add( new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A"));
+                Method methodAux = this.getMethod(i.getMethodName(cp));
+                if (methodAux!=null) {
+                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
+                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
+                    cfl.addToList(m,method);
+                    methodCalls.add(m);
+                }
             }
         }
     }
@@ -137,9 +151,14 @@ public class MethodVisitor extends EmptyVisitor {
     public void visitINVOKESTATIC(INVOKESTATIC i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
             if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
-                Method method = this.getMethod(i.getMethodName(cp));
-                MethodGen mg = new MethodGen(method, visitedClass.getClassName(), constants);
-                methodCalls.add( new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A"));
+                Method methodAux = this.getMethod(i.getMethodName(cp));
+                if (methodAux!=null) {
+                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
+                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
+                    cfl.addToList(m,method);
+                    methodCalls.add(m);
+                }
             }
         }
     }    
@@ -147,7 +166,14 @@ public class MethodVisitor extends EmptyVisitor {
     public void visitINVOKEDYNAMIC(INVOKEDYNAMIC i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
             if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
-                methodCalls.add( new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A"));
+                Method methodAux = this.getMethod(i.getMethodName(cp));
+                if (methodAux!=null) {
+                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
+                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
+                    cfl.addToList(m,method);
+                    methodCalls.add(m);
+                }
             }
         }
     }

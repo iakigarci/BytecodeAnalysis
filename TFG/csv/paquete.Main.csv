@@ -1,7 +1,7 @@
 Nombre,Nivel,LOC,Resultado,Linea en clase,Llamado por
 <init>,0,3,void,7,
-f1,1,5,void,20,
-f2,2,1,void,28,
+f1,1,5,void,20,"[paquete.Main<init>, paquete.Mainmain]"
+f2,2,1,void,28,[paquete.Mainf1]
 main,0,4,void,13,
-f1,1,5,void,20,
-f2,2,1,void,28,
+f1,1,5,void,20,"[paquete.Main<init>, paquete.Mainmain]"
+f2,2,1,void,28,[paquete.Mainf1]

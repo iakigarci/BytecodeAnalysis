@@ -1,2 +1,6 @@
 Nombre,Nivel,LOC,Resultado,Linea en clase,Llamado por
-f8,0,1,void,24,
+<init>,0,2,void,4,
+f5,1,2,void,9,[paquete.Tercero<init>]
+f6,2,2,void,14,[paquete.Tercerof5]
+f7,3,2,void,19,[paquete.Tercerof6]
+f8,4,1,void,24,[paquete.Tercerof7]

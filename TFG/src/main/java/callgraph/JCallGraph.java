@@ -281,6 +281,9 @@ public class JCallGraph {
     }
 
     private static boolean isZeroLelel(HashMap<MethodReport, List<MethodReport>> map, MethodReport m) {
+        if (m.getNombre().contains("init")) {
+            return true;
+        }
         for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
             if (entry.getValue().contains(m)) {
                 return false;
