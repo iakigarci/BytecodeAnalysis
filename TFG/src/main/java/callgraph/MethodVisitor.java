@@ -108,7 +108,6 @@ public class MethodVisitor extends EmptyVisitor {
                     MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
                     CalledFromList cfl =  CalledFromList.getCalledfromlist();
                     MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
-                    cfl.addToList(m,method);
                     methodCalls.add(m);
                 }
             }

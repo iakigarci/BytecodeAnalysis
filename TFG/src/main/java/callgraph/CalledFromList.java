@@ -28,7 +28,7 @@ public class CalledFromList {
         calledMap.put(method, new ArrayList<MethodReport>());
     }
 
-    public void addToList(MethodReport key, MethodReport val) {
+    public void addToList(MethodReport key, MethodReport val) {  // key llamado por val
         if (!calledMap.containsKey(key)) {
             calledMap.put(key, new ArrayList<MethodReport>());
         }

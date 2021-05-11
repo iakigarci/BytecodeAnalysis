@@ -1,5 +1,5 @@
 Nombre,Nivel,LOC,Resultado,Linea en clase,Llamado por
-<init>,0,2,void,4,
+<init>,0,2,void,4,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"
 f5,1,2,void,9,[paquete.Tercero<init>]
 f6,2,2,void,14,[paquete.Tercerof5]
 f7,3,2,void,19,[paquete.Tercerof6]

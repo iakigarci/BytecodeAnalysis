@@ -76,6 +76,8 @@ public class JCallGraph {
     private static List<HashMap<MethodReport,List<MethodReport>>> methodCalls;
     private static List<MethodReport> visitedMethods = new ArrayList<MethodReport>();
     private static CSVPrinter csvPrinter = null;
+    private static CalledFromList cfl;
+    private static String calledFrom = "";
 
 
     public static void main(String[] args) {
@@ -89,6 +91,7 @@ public class JCallGraph {
         };
 
         try {
+            cfl = CalledFromList.getCalledfromlist();
             methodCalls = new ArrayList<HashMap<MethodReport,List<MethodReport>>>();
             lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
             lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
@@ -171,7 +174,10 @@ public class JCallGraph {
                     csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "Resultado", "Linea en clase", "Llamado por"));
                     for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
                         if (isZeroLelel(map, entry.getKey())) {
-                            csvPrinter.printRecord(entry.getKey().getNombre(),0, entry.getKey().getLOC(), entry.getKey().getResultado(), entry.getKey().getLineaClase(),"");
+                            if (cfl.getCalledMap().containsKey(entry.getKey())) {
+                                calledFrom = cfl.getCalledMap().get(entry.getKey()).toString();
+                            }
+                            csvPrinter.printRecord(entry.getKey().getNombre(),0, entry.getKey().getLOC(), entry.getKey().getResultado(), entry.getKey().getLineaClase(),calledFrom);
                             // Recorrer hijos
                             for(MethodReport method : entry.getValue()) {
                                 if (map.get(method) != null) {
@@ -192,8 +198,6 @@ public class JCallGraph {
     }
 
     public static void printHijos(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level) throws IOException {
-        CalledFromList cfl = CalledFromList.getCalledfromlist();
-        String calledFrom = "";
         if (!visitedMethods.contains(method)) {
             visitedMethods.add(method);
             if (cfl.getCalledMap().containsKey(method)) {
