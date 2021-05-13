@@ -1,8 +1,0 @@
-Nombre,Nivel,LOC,Resultado,Linea en clase,Llamado por
-<clinit>,0,3,void,3,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"
-<init>,1,0,void,2,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"
-<init>,1,0,void,2,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"
-<init>,1,0,void,2,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"
-<init>,0,0,void,2,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"
-values,0,0,paquete.ClaseEnum[],0,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"
-valueOf,0,0,paquete.ClaseEnum,0,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"

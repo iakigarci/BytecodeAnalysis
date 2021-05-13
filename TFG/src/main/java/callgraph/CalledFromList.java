@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 public class CalledFromList {
-    private Map<MethodReport,List<MethodReport>> calledMap;
+    private Map<String,List<String>> calledMap;
     private static CalledFromList calledFromList = null;
     
     private CalledFromList() {
         calledMap = new HashMap<>();
     }
 
-    public Map<MethodReport, List<MethodReport>> getCalledMap() {
+    public Map<String, List<String>> getCalledMap() {
         return calledMap;
     }
 
@@ -24,15 +24,15 @@ public class CalledFromList {
         return calledFromList;
     }
     
-    public void add(MethodReport method) {
-        calledMap.put(method, new ArrayList<MethodReport>());
+    public void add(String method) {
+        calledMap.put(method, new ArrayList<String>());
     }
 
-    public void addToList(MethodReport key, MethodReport val) {  // key llamado por val
+    public void addToList(String key, String val) {  // key llamado por val
         if (!calledMap.containsKey(key)) {
-            calledMap.put(key, new ArrayList<MethodReport>());
+            calledMap.put(key, new ArrayList<String>());
         }
-        List<MethodReport> l = calledMap.get(key);
+        List<String> l = calledMap.get(key);
         l.add(val);
         calledMap.put(key, l);
     }

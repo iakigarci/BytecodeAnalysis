@@ -24,7 +24,7 @@ public class MethodReport {
     }
 
     public MethodReport(String nombre) {
-        nombre = nombre;
+        this.nombre = nombre;
     }
 
     public String getNombre() {

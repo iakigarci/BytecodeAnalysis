@@ -52,12 +52,14 @@ public class MethodVisitor extends EmptyVisitor {
     private MethodReport method;
     private List<MethodReport> methodCalls = new ArrayList<>();
     private ConstantPoolGen constants;
+    private static CalledFromList cfl;
 
     public MethodVisitor(MethodGen m, JavaClass jc, ConstantPoolGen cpg) {
         visitedClass = jc;
         mg = m;
         cp = mg.getConstantPool();
         constants = cpg;
+        cfl = CalledFromList.getCalledfromlist();
     }
 
     private String argumentList(Type[] arguments) {
@@ -102,14 +104,23 @@ public class MethodVisitor extends EmptyVisitor {
     @Override
     public void visitINVOKEVIRTUAL(INVOKEVIRTUAL i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+            if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
-                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
-                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
-                    methodCalls.add(m);
+                    int sourceLine = -1;
+                    MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    if (mgAUx.getLineNumbers().length!=0) {
+                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine()-1;
+                    }
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),sourceLine,"A");
+                    if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                        methodCalls.add(m);
+        
+                    }
                 }
+            }else{
+                cfl =  CalledFromList.getCalledfromlist();
+                cfl.addToList(i.getReferenceType(cp).toString()+ i.getMethodName(cp),method.getPaquete() + method.getNombre());
             }
         }
     }
@@ -117,15 +128,19 @@ public class MethodVisitor extends EmptyVisitor {
     @Override
     public void visitINVOKEINTERFACE(INVOKEINTERFACE i) { // metodo que se visita desde mg
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+            if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
-                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
-                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
-                    cfl.addToList(m,method);
-                    methodCalls.add(m);
+                    MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),(mgAUx.getLineNumbers()[0].getSourceLine())-1,"A");
+                    if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                        methodCalls.add(m);
+        
+                    }
                 }
+            }else{
+                cfl =  CalledFromList.getCalledfromlist();
+                cfl.addToList(i.getReferenceType(cp).toString()+ i.getMethodName(cp),method.getPaquete() + method.getNombre());
             }
         }
     }
@@ -133,15 +148,19 @@ public class MethodVisitor extends EmptyVisitor {
     @Override
     public void visitINVOKESPECIAL(INVOKESPECIAL i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+            if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
-                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
-                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
-                    cfl.addToList(m,method);
-                    methodCalls.add(m);
+                    MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),(mgAUx.getLineNumbers()[0].getSourceLine())-1,"A");
+                    if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                        methodCalls.add(m);
+        
+                    }
                 }
+            }else{
+                cfl =  CalledFromList.getCalledfromlist();
+                cfl.addToList(i.getReferenceType(cp).toString()+ i.getMethodName(cp),method.getPaquete() + method.getNombre());
             }
         }
     }
@@ -149,30 +168,39 @@ public class MethodVisitor extends EmptyVisitor {
     @Override
     public void visitINVOKESTATIC(INVOKESTATIC i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+            if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
-                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
-                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
-                    cfl.addToList(m,method);
-                    methodCalls.add(m);
+                    MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),(mgAUx.getLineNumbers()[0].getSourceLine())-1,"A");
+                    if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                        methodCalls.add(m);
+        
+                    }
                 }
+            }else{
+                cfl =  CalledFromList.getCalledfromlist();
+                cfl.addToList(i.getReferenceType(cp).toString()+ i.getMethodName(cp),method.getPaquete() + method.getNombre());
             }
         }
     }    
+
     @Override
     public void visitINVOKEDYNAMIC(INVOKEDYNAMIC i) {
         if(JCallGraph.isPackage(i.getReferenceType(cp).toString())) {
-            if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+            if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
-                    MethodGen mg = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    CalledFromList cfl =  CalledFromList.getCalledfromlist();
-                    MethodReport m =  new MethodReport(mg.getName(),mg.getClassName(),mg.getLineNumbers().length - 1,mg.getReturnType().toString(),(mg.getLineNumbers()[0].getSourceLine())-1,"A");
-                    cfl.addToList(m,method);
-                    methodCalls.add(m);
+                    MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),(mgAUx.getLineNumbers()[0].getSourceLine())-1,"A");
+                    if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
+                        methodCalls.add(m);
+        
+                    }
                 }
+            }else{
+                cfl =  CalledFromList.getCalledfromlist();
+                cfl.addToList(i.getReferenceType(cp).toString()+ i.getMethodName(cp),method.getPaquete() + method.getNombre());
             }
         }
     }

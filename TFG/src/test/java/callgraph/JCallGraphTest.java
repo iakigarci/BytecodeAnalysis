@@ -55,4 +55,22 @@ public class JCallGraphTest {
         s[1] = "callgraph,util";
         JCallGraph.main(s);
     }
+
+    @Test 
+    void testMain7() {
+        String[] s = new String[3];
+        s[0] = "git_java.jar";
+        s[1] = "github";
+        s[2] = "*,";
+        JCallGraph.main(s);
+    }
+
+    @Test 
+    void testMain8() {
+        String[] s = new String[3];
+        s[0] = "arthas-boot.jar";
+        s[1] = "arthas";
+        s[2] = "*,";
+        JCallGraph.main(s);
+    }
 }

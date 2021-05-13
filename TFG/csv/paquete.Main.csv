@@ -1,7 +1,0 @@
-Nombre,Nivel,LOC,Resultado,Linea en clase,Llamado por
-<init>,0,3,void,7,"[paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>, paquete.ClaseEnum<clinit>]"
-f1,1,5,void,20,"[paquete.Main<init>, paquete.Mainmain]"
-f2,2,1,void,28,[paquete.Mainf1]
-main,0,4,void,13,[paquete.Mainf1]
-f1,1,5,void,20,"[paquete.Main<init>, paquete.Mainmain]"
-f2,2,1,void,28,[paquete.Mainf1]

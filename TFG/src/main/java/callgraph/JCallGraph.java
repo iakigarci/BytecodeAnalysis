@@ -73,12 +73,11 @@ public class JCallGraph {
     private static List<String> lInclude = null;
     private static List<String> lExclude = null;
     private GenericTree<MethodReport> tree = new GenericTree<>();
-    private static List<HashMap<MethodReport,List<MethodReport>>> methodCalls;
+    private static List<HashMap<MethodReport, List<MethodReport>>> methodCalls;
     private static List<MethodReport> visitedMethods = new ArrayList<MethodReport>();
     private static CSVPrinter csvPrinter = null;
     private static CalledFromList cfl;
     private static String calledFrom = "";
-
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
@@ -92,7 +91,7 @@ public class JCallGraph {
 
         try {
             cfl = CalledFromList.getCalledfromlist();
-            methodCalls = new ArrayList<HashMap<MethodReport,List<MethodReport>>>();
+            methodCalls = new ArrayList<HashMap<MethodReport, List<MethodReport>>>();
             lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
             lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
             File f = new File(args[0]);
@@ -101,18 +100,18 @@ public class JCallGraph {
             }
             try (JarFile jar = new JarFile(f)) {
                 Stream<JarEntry> entries = enumerationAsStream(jar.entries()); // All files from jar
-                entries.forEach(e -> { 
+                entries.forEach(e -> {
                     if (!e.isDirectory() && e.getName().endsWith(".class")) {
-                        if (isPackage(e.getName())) { 
+                        if (isPackage(e.getName())) {
                             ClassParser cp = new ClassParser(args[0], e.getName());
-                            HashMap<MethodReport,List<MethodReport>> map = getClassVisitor.apply(cp).start().methodCalls();
-                            if(map!=null){
+                            HashMap<MethodReport, List<MethodReport>> map = getClassVisitor.apply(cp).start()
+                                    .methodCalls();
+                            if (map != null) {
                                 methodCalls.add(map);
                             }
                         }
                     }
                 });
-                CalledFromList cfl = CalledFromList.getCalledfromlist();
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls.toString());
                 log.close();
@@ -129,19 +128,19 @@ public class JCallGraph {
         GenericTreeNode<MethodReport> root = new GenericTreeNode<>(new MethodReport());
         tree.setRoot(root);
         boolean exit = false;
-        for(HashMap<MethodReport,List<MethodReport>> map : methodCalls) {
+        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) {
             // Se recorren todas las clases analizadas
             Entry<MethodReport, List<MethodReport>> init = map.entrySet().iterator().next();
             GenericTreeNode<MethodReport> child = new GenericTreeNode<>(init.getKey());
-            for(MethodReport m : init.getValue()) { // hijos del init
+            for (MethodReport m : init.getValue()) { // hijos del init
                 GenericTreeNode<MethodReport> childAux = new GenericTreeNode<>(m);
-                while(!exit) {
-                    if (map.get(m)==null) {
-                        exit=true;
+                while (!exit) {
+                    if (map.get(m) == null) {
+                        exit = true;
                     } else {
-                        for(MethodReport mAux : map.get(m)) {
+                        for (MethodReport mAux : map.get(m)) {
 
-                        } 
+                        }
                     }
                 }
                 exit = false;
@@ -154,7 +153,7 @@ public class JCallGraph {
 
     public static void createCSV2() throws IOException {
         File dir = null;
-        String dirName = System.getProperty("user.dir")+"/csv/";
+        String dirName = System.getProperty("user.dir") + "/csv/";
         Path path = Paths.get(dirName);
         dir = new File(dirName);
         if (Files.exists(path)) {
@@ -164,25 +163,30 @@ public class JCallGraph {
         BufferedWriter writer = null;
         FileWriter fileWriter = null;
         try {
-            for(HashMap<MethodReport,List<MethodReport>> map : methodCalls) { // Recorrer .class
+            for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) { // Recorrer .class
                 Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
                 if (!entrySet.isEmpty()) {
                     // MethodReport f = (MethodReport) map.keySet().toArray()[0];
-                    String name = "/"+ entrySet.iterator().next().getKey().getPaquete() + ".csv";
-                    fileWriter = new FileWriter(dir+name);
+                    String name = "/" + entrySet.iterator().next().getKey().getPaquete() + ".csv";
+                    fileWriter = new FileWriter(dir + name);
                     writer = new BufferedWriter(fileWriter);
-                    csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "Resultado", "Linea en clase", "Llamado por"));
-                    for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+                    csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC",
+                            "Resultado", "Linea en clase", "Llamado por"));
+                    for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
                         if (isZeroLelel(map, entry.getKey())) {
-                            if (cfl.getCalledMap().containsKey(entry.getKey())) {
-                                calledFrom = cfl.getCalledMap().get(entry.getKey()).toString();
+                            if (cfl.getCalledMap()
+                                    .containsKey(entry.getKey().getPaquete() + entry.getKey().getNombre())) {
+                                calledFrom = cfl.getCalledMap()
+                                        .get(entry.getKey().getPaquete() + entry.getKey().getNombre()).toString();
                             }
-                            csvPrinter.printRecord(entry.getKey().getNombre(),0, entry.getKey().getLOC(), entry.getKey().getResultado(), entry.getKey().getLineaClase(),calledFrom);
+                            csvPrinter.printRecord(entry.getKey().getNombre(), 0, entry.getKey().getLOC(),
+                                    entry.getKey().getResultado(), entry.getKey().getLineaClase(), calledFrom);
+                            calledFrom = "";
                             // Recorrer hijos
-                            for(MethodReport method : entry.getValue()) {
+                            for (MethodReport method : entry.getValue()) {
                                 if (map.get(method) != null) {
                                     visitedMethods.clear();
-                                    printHijos(method, new HashMap<>(map),1);
+                                    printHijos(method, new HashMap<>(map), 1);
                                 }
                             }
                         }
@@ -190,22 +194,25 @@ public class JCallGraph {
                     csvPrinter.close();
                     writer.close();
                 }
-            }   
+            }
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public static void printHijos(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level) throws IOException {
+    public static void printHijos(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level)
+            throws IOException {
         if (!visitedMethods.contains(method)) {
             visitedMethods.add(method);
-            if (cfl.getCalledMap().containsKey(method)) {
-                calledFrom = cfl.getCalledMap().get(method).toString();
+            if (cfl.getCalledMap().containsKey(method.getPaquete() + method.getNombre())) {
+                calledFrom = cfl.getCalledMap().get(method.getPaquete() + method.getNombre()).toString();
             }
-            csvPrinter.printRecord(method.getNombre(),level, method.getLOC(), method.getResultado(), method.getLineaClase(),calledFrom);
-            for(MethodReport aux : map.get(method)) {
-                printHijos(aux,map,level+1);
+            csvPrinter.printRecord(method.getNombre(), level, method.getLOC(), method.getResultado(),
+                    method.getLineaClase(), calledFrom);
+            calledFrom = "";
+            for (MethodReport aux : map.get(method)) {
+                printHijos(aux, map, level + 1);
             }
         }
     }
@@ -218,13 +225,13 @@ public class JCallGraph {
         CSVPrinter csvPrinter = null;
         try {
             writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
-            csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Paquete", "LOC", "Resultado", "Linea en clase", "Destino"));
-            for(String s : methodCalls) {
+            csvPrinter = new CSVPrinter(writer,
+                    CSVFormat.DEFAULT.withHeader("Nombre", "Paquete", "LOC", "Resultado", "Linea en clase", "Destino"));
+            for (String s : methodCalls) {
                 String[] str = s.split(" ");
                 String[] method = str[0].split("/");
-                csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4],str[1]);
+                csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4], str[1]);
             }
-            
 
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
@@ -253,15 +260,17 @@ public class JCallGraph {
     }
 
     public static boolean isPackage(String name) {
-        if (lExclude.get(0).equals("*")) {
+        if (name.contains("$")) {
+            return false;
+        } else if (lExclude.get(0).equals("*")) {
             return isExactSubsecuence(name, lInclude.get(0));
-        } else if(lInclude.isEmpty() && lExclude.isEmpty()) {
+        } else if (lInclude.isEmpty() && lExclude.isEmpty()) {
             return true;
-        }else{
+        } else {
             for (String include : lInclude) {
-                if (isExactSubsecuence(name, include) ) {
+                if (isExactSubsecuence(name, include)) {
                     boolean exit = false;
-                    for(String exclude : lExclude) {
+                    for (String exclude : lExclude) {
                         if (isExactSubsecuence(name, exclude)) {
                             exit = true;
                             break;
@@ -276,7 +285,6 @@ public class JCallGraph {
         }
     }
 
-
     public static boolean isExactSubsecuence(String source, String subItem) {
         String pattern = "\\b" + subItem + "\\b";
         Pattern p = Pattern.compile(pattern);
@@ -288,7 +296,7 @@ public class JCallGraph {
         if (m.getNombre().contains("init")) {
             return true;
         }
-        for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+        for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
             if (entry.getValue().contains(m)) {
                 return false;
             }
