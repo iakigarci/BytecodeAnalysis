@@ -71,7 +71,7 @@ public class ClassVisitor extends EmptyVisitor {
             DCManager.linkCalls(method);
             method.accept(this);
         }
-        System.out.println(DCManager.getDynamicCallers().toString());
+        // System.out.println(DCManager.getDynamicCallers().toString());
     }
 
     public void visitConstantPool(ConstantPool constantPool) {
@@ -82,7 +82,7 @@ public class ClassVisitor extends EmptyVisitor {
             if (constant.getTag() == 7) {
                 String referencedClass = 
                     constantPool.constantToString(constant);
-                System.out.println(String.format(classReferenceFormat, referencedClass));
+                // System.out.println(String.format(classReferenceFormat, referencedClass));
             }
         }
     }

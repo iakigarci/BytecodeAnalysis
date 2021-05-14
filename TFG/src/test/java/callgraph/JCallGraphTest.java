@@ -69,8 +69,17 @@ public class JCallGraphTest {
     void testMain8() {
         String[] s = new String[3];
         s[0] = "arthas-boot.jar";
-        s[1] = "arthas";
-        s[2] = "*,";
+        s[1] = "";
+        s[2] = "";
+        JCallGraph.main(s);
+    }
+
+    @Test 
+    void testMain9() {
+        String[] s = new String[3];
+        s[0] = "indaba_report.jar";
+        s[1] = "";
+        s[2] = "";
         JCallGraph.main(s);
     }
 }

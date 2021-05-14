@@ -70,7 +70,7 @@ import org.apache.bcel.classfile.ClassParser;
  */
 public class JCallGraph {
 
-    private static List<String> lInclude = null;
+    private static List<String> lInclude;
     private static List<String> lExclude = null;
     private GenericTree<MethodReport> tree = new GenericTree<>();
     private static List<HashMap<MethodReport, List<MethodReport>>> methodCalls;
@@ -92,8 +92,16 @@ public class JCallGraph {
         try {
             cfl = CalledFromList.getCalledfromlist();
             methodCalls = new ArrayList<HashMap<MethodReport, List<MethodReport>>>();
-            lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
-            lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
+            if(args[1].length()!=0) {
+                lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
+            }else{
+                lInclude = new ArrayList<>();
+            }
+            if(args[2].length()!=0) {
+                lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
+            }else{
+                lExclude = new ArrayList<>();
+            }
             File f = new File(args[0]);
             if (!f.exists()) {
                 System.err.println("Jar file " + args[0] + " does not exist");
@@ -211,8 +219,12 @@ public class JCallGraph {
             csvPrinter.printRecord(method.getNombre(), level, method.getLOC(), method.getResultado(),
                     method.getLineaClase(), calledFrom);
             calledFrom = "";
-            for (MethodReport aux : map.get(method)) {
-                printHijos(aux, map, level + 1);
+            if (method != null && map != null && !map.isEmpty()) {
+                for (MethodReport aux : map.get(method)) {
+                    if (aux != null) {
+                        printHijos(aux, map, level + 1);
+                    }
+                } 
             }
         }
     }
@@ -262,10 +274,10 @@ public class JCallGraph {
     public static boolean isPackage(String name) {
         if (name.contains("$")) {
             return false;
-        } else if (lExclude.get(0).equals("*")) {
-            return isExactSubsecuence(name, lInclude.get(0));
         } else if (lInclude.isEmpty() && lExclude.isEmpty()) {
             return true;
+        } else if (lExclude.get(0).equals("*")) {
+            return isExactSubsecuence(name, lInclude.get(0));
         } else {
             for (String include : lInclude) {
                 if (isExactSubsecuence(name, include)) {

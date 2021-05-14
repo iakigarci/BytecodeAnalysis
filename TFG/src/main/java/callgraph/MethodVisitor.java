@@ -75,7 +75,10 @@ public class MethodVisitor extends EmptyVisitor {
 
     public HashMap<MethodReport,List<MethodReport>> start() {
         int lines = mg.getLineNumbers().length - 1;
-        int lineaClase = (mg.getLineNumbers()[0].getSourceLine())-1;
+        int lineaClase = -1;
+        if (mg.getLineNumbers().length!=0) {
+            lineaClase = (mg.getLineNumbers()[0].getSourceLine())-1;
+        }
         method = new MethodReport(mg.getName(),mg.getClassName(),lines,mg.getReturnType().toString(),lineaClase,"A");
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
                 if (mg.isAbstract() || mg.isNative())
@@ -112,7 +115,7 @@ public class MethodVisitor extends EmptyVisitor {
                     if (mgAUx.getLineNumbers().length!=0) {
                         sourceLine = mgAUx.getLineNumbers()[0].getSourceLine()-1;
                     }
-                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),sourceLine,"A");
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length,mgAUx.getReturnType().toString(),sourceLine,"A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
                         methodCalls.add(m);
         
@@ -131,8 +134,12 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
+                    int sourceLine = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),(mgAUx.getLineNumbers()[0].getSourceLine())-1,"A");
+                    if (mgAUx.getLineNumbers().length!=0) {
+                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine()-1;
+                    }
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length,mgAUx.getReturnType().toString(),sourceLine,"A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
                         methodCalls.add(m);
         
@@ -151,8 +158,12 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
+                    int sourceLine = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),(mgAUx.getLineNumbers()[0].getSourceLine())-1,"A");
+                    if (mgAUx.getLineNumbers().length!=0) {
+                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine()-1;
+                    }
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length,mgAUx.getReturnType().toString(),sourceLine,"A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
                         methodCalls.add(m);
         
@@ -171,8 +182,12 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
+                    int sourceLine = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),(mgAUx.getLineNumbers()[0].getSourceLine())-1,"A");
+                    if (mgAUx.getLineNumbers().length!=0) {
+                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine()-1;
+                    }
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length,mgAUx.getReturnType().toString(),sourceLine,"A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
                         methodCalls.add(m);
         
@@ -191,8 +206,12 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux!=null) {
+                    int sourceLine = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length - 1,mgAUx.getReturnType().toString(),(mgAUx.getLineNumbers()[0].getSourceLine())-1,"A");
+                    if (mgAUx.getLineNumbers().length!=0) {
+                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine()-1;
+                    }
+                    MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length,mgAUx.getReturnType().toString(),sourceLine,"A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
                         methodCalls.add(m);
         
