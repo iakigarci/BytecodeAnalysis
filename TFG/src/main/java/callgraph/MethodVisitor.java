@@ -30,6 +30,7 @@
 package callgraph;
 
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.LineNumberTable;
 import org.apache.bcel.generic.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,12 +75,15 @@ public class MethodVisitor extends EmptyVisitor {
     }
 
     public HashMap<MethodReport,List<MethodReport>> start() {
-        int lines = mg.getLineNumbers().length - 1;
         int lineaClase = -1;
+        int LOC = -1;
         if (mg.getLineNumbers().length!=0) {
             lineaClase = (mg.getLineNumbers()[0].getSourceLine())-1;
+            LOC =  getLineNumbers(lineaClase, mg);
         }
-        method = new MethodReport(mg.getName(),mg.getClassName(),lines,mg.getReturnType().toString(),lineaClase,"A");
+        method = new MethodReport(mg.getName(),mg.getClassName(),LOC,mg.getReturnType().toString(),lineaClase,"A");
+        LineNumberTable lnt = mg.getLineNumberTable(cp);
+        LineNumberGen[] lng = mg.getLineNumbers();
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
                 if (mg.isAbstract() || mg.isNative())
                 return (HashMap<MethodReport, List<MethodReport>>) Collections.emptyList();
@@ -115,6 +119,7 @@ public class MethodVisitor extends EmptyVisitor {
                     if (mgAUx.getLineNumbers().length!=0) {
                         sourceLine = mgAUx.getLineNumbers()[0].getSourceLine()-1;
                     }
+
                     MethodReport m =  new MethodReport(mgAUx.getName(),mgAUx.getClassName(),mgAUx.getLineNumbers().length,mgAUx.getReturnType().toString(),sourceLine,"A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(), this.visitedClass.getClassName())) {
                         methodCalls.add(m);
@@ -238,5 +243,17 @@ public class MethodVisitor extends EmptyVisitor {
             }
         }
         return null;
+    }
+
+    private int getLineNumbers(int sourceLine, MethodGen pMg) {
+        LineNumberGen[] lng = pMg.getLineNumbers();
+        int lineNumbers = lng[lng.length-1].getSourceLine() - sourceLine;
+        if (lng[lng.length-1].getInstruction().toString().contains(" return")) {
+            lineNumbers--;
+        }
+        //else if (lng[lng.length-1].getInstruction().getNext()!=null) {
+        //    lineNumbers++;
+        //}
+        return lineNumbers;
     }
 }
