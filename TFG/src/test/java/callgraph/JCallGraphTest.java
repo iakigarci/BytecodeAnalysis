@@ -25,7 +25,7 @@ public class JCallGraphTest {
     void testMain3() {
         String[] s = new String[3];
         s[0] = "indaba_report.jar";
-        s[1] = "configuration";
+        s[1] = "utils";
         s[2] = "sonarqube,apache,google,okhttp3";
         JCallGraph.main(s);
     }
