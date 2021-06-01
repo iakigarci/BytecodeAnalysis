@@ -29,9 +29,15 @@
 
 package callgraph;
 
+import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LineNumberTable;
 import org.apache.bcel.generic.*;
+
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.bytecode.MethodInfo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,6 +86,7 @@ public class MethodVisitor extends EmptyVisitor {
             lineaClase = (mg.getLineNumbers()[0].getSourceLine()) - 1;
             LOC = getLineNumbers(lineaClase, mg);
         }
+
         method = new MethodReport(mg.getName(), mg.getClassName(), LOC, mg.getReturnType().toString(), lineaClase, "A");
         LineNumberTable lnt = mg.getLineNumberTable(cp);
         LineNumberGen[] lng = mg.getLineNumbers();

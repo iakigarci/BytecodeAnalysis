@@ -28,13 +28,18 @@
 
 package callgraph;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,10 +62,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.NotFoundException;
+import javassist.bytecode.MethodInfo;
+import javassist.compiler.Javac;
+
+import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.JavaClass;
 
 /**
  * Constructs a callgraph out of a JAR archive. Can combine multiple archives
@@ -120,6 +140,8 @@ public class JCallGraph {
                         }
                     }
                 });
+                readJavaFiles();
+
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls.toString());
                 log.close();
@@ -129,6 +151,35 @@ public class JCallGraph {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public static void readJavaFiles() throws IOException {
+        ZipFile zipFile = new ZipFile("callgraph.zip");
+
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        StringWriter writer = new StringWriter();
+        StringBuilder sb = new StringBuilder();
+        String s = "";
+        while(entries.hasMoreElements()){
+            ZipEntry entry = entries.nextElement();
+            InputStream stream = zipFile.getInputStream(entry);
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + System.lineSeparator());
+                s = sb.toString();
+                if (isMethod(line)) {
+                    
+                }
+            }
+        }
+    }
+
+    public static boolean isMethod(String line) {
+        if ((line.contains("public") || line.contains("private")) && !line.contains("class") &&  !line.contains(";")) { 
+            return true;
+        }
+        return false;
     }
 
     public static void createTree() {
