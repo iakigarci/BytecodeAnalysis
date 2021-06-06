@@ -86,10 +86,8 @@ public class MethodVisitor extends EmptyVisitor {
             lineaClase = (mg.getLineNumbers()[0].getSourceLine()) - 1;
             LOC = getLineNumbers(lineaClase, mg);
         }
-
         method = new MethodReport(mg.getName(), mg.getClassName(), LOC, mg.getReturnType().toString(), lineaClase, "A");
-        LineNumberTable lnt = mg.getLineNumberTable(cp);
-        LineNumberGen[] lng = mg.getLineNumbers();
+
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
             if (mg.isAbstract() || mg.isNative())
                 return (HashMap<MethodReport, List<MethodReport>>) Collections.emptyList();
@@ -290,4 +288,16 @@ public class MethodVisitor extends EmptyVisitor {
         }
         return lineNumbers;
     }
+
+    // private int getLastLine(MethodGen pMg) {
+    //     LineNumberGen[] lng = pMg.getLineNumbers();
+    //     int lastLine = lng[lng.length - 1].getSourceLine();
+    //     if (lng[lng.length - 1].getInstruction().toString().contains(" return")) {
+    //         lastLine = lng[lng.length - 2].getSourceLine();
+    //         if (lng[lng.length - 2].getInstruction().getNext()!=null) {
+    //             lastLine++;
+    //         }
+    //     }
+    //     return 
+    // }
 }

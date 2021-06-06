@@ -9,15 +9,16 @@ public class MethodReport {
     private String resultado;
     private int lineaClase;
     private String tipo;
+    private int ultimaLinea;
 
     public MethodReport() {
 
     }
 
-    public MethodReport(String nombre, String paquete, int lOC, String resultado, int lineaClase, String tipo) {
+    public MethodReport(String nombre, String paquete, int ultimaLinea, String resultado, int lineaClase, String tipo) {
         this.nombre = nombre;
         this.paquete = paquete;
-        LOC = lOC;
+        this.ultimaLinea = ultimaLinea;
         this.resultado = resultado;
         this.lineaClase = lineaClase;
         this.tipo = tipo;
@@ -88,4 +89,13 @@ public class MethodReport {
     public String toString() {
         return this.paquete+this.nombre;
     }
+
+    public int getUltimaLinea() {
+        return ultimaLinea;
+    }
+
+    public void setUltimaLinea(int ultimaLinea) {
+        this.ultimaLinea = ultimaLinea;
+    }
+
 }

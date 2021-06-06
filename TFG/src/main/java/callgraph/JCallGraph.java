@@ -67,20 +67,11 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-import javassist.bytecode.MethodInfo;
-import javassist.compiler.Javac;
 
-import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.JavaClass;
+
 
 /**
  * Constructs a callgraph out of a JAR archive. Can combine multiple archives
@@ -92,12 +83,12 @@ public class JCallGraph {
 
     private static List<String> lInclude;
     private static List<String> lExclude = null;
-    private GenericTree<MethodReport> tree = new GenericTree<>();
     private static List<HashMap<MethodReport, List<MethodReport>>> methodCalls;
     private static List<MethodReport> visitedMethods = new ArrayList<MethodReport>();
     private static CSVPrinter csvPrinter = null;
     private static CalledFromList cfl;
     private static String calledFrom = "";
+    private static JCallGraph jCallGraph = null;
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
@@ -112,14 +103,14 @@ public class JCallGraph {
         try {
             cfl = CalledFromList.getCalledfromlist();
             methodCalls = new ArrayList<HashMap<MethodReport, List<MethodReport>>>();
-            if(args[1].length()!=0) {
+            if (args[1].length() != 0) {
                 lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
-            }else{
+            } else {
                 lInclude = new ArrayList<>();
             }
-            if(args[2].length()!=0) {
+            if (args[2].length() != 0) {
                 lExclude = new ArrayList<String>(Arrays.asList(args[2].split(",")));
-            }else{
+            } else {
                 lExclude = new ArrayList<>();
             }
             File f = new File(args[0]);
@@ -153,62 +144,50 @@ public class JCallGraph {
         }
     }
 
+    public static JCallGraph getJCallGraph() {
+        if (jCallGraph == null) {
+            jCallGraph = new JCallGraph();
+        }
+        return jCallGraph;
+    }
+
     public static void readJavaFiles() throws IOException {
         ZipFile zipFile = new ZipFile("callgraph.zip");
-
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        StringWriter writer = new StringWriter();
-        StringBuilder sb = new StringBuilder();
-        String s = "";
-        while(entries.hasMoreElements()){
+        JavaFile jFile;
+        boolean exit = false;
+        while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
             InputStream stream = zipFile.getInputStream(entry);
-            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + System.lineSeparator());
-                s = sb.toString();
-                if (isMethod(line)) {
-                    
-                }
-            }
+            jFile = new JavaFile(stream);
+            jFile.readFile();        
         }
     }
 
-    public static boolean isMethod(String line) {
-        if ((line.contains("public") || line.contains("private")) && !line.contains("class") &&  !line.contains(";")) { 
-            return true;
-        }
-        return false;
+    public static void addMetrics(String methodName, int LOC, int sourceLine, int complexity){
+        MethodReport method = methodCalls.get(methodName);
+        continue;
     }
 
-    public static void createTree() {
-        GenericTree<MethodReport> tree = new GenericTree<>();
-        GenericTreeNode<MethodReport> root = new GenericTreeNode<>(new MethodReport());
-        tree.setRoot(root);
-        boolean exit = false;
-        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) {
-            // Se recorren todas las clases analizadas
-            Entry<MethodReport, List<MethodReport>> init = map.entrySet().iterator().next();
-            GenericTreeNode<MethodReport> child = new GenericTreeNode<>(init.getKey());
-            for (MethodReport m : init.getValue()) { // hijos del init
-                GenericTreeNode<MethodReport> childAux = new GenericTreeNode<>(m);
-                while (!exit) {
-                    if (map.get(m) == null) {
-                        exit = true;
-                    } else {
-                        for (MethodReport mAux : map.get(m)) {
+    // methodAux = getMethodReport(line);
+    // methodAux.setLineaClase(lineNumber);
+    // i = 0;
+    // for (; i < methodAux.getUltimaLinea(); i++) { // Se saltan las lineas del
+    // método
+    // br.readLine();
+    // }
+    // lineNumber += i;
+    // while ((line = br.readLine()) != null) {
+    // if
+    // }
+    // exit = true;
 
-                        }
-                    }
-                }
-                exit = false;
-                child.addChild(childAux);
-            }
-            root.addChild(child); // El arbol tiene ya el init, colgando de root.
+    
 
-        }
-    }
+    // public static MethodReport getMethodReport(String line) {
+
+    // }
+
 
     public static void createCSV2() throws IOException {
         File dir = null;
@@ -275,7 +254,7 @@ public class JCallGraph {
                     if (aux != null) {
                         printHijos(aux, map, level + 1);
                     }
-                } 
+                }
             }
         }
     }
