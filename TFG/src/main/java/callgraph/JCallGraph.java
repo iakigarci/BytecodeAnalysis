@@ -69,9 +69,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.codehaus.plexus.util.FileUtils;
 
-
 import org.apache.bcel.classfile.ClassParser;
-
 
 /**
  * Constructs a callgraph out of a JAR archive. Can combine multiple archives
@@ -89,6 +87,7 @@ public class JCallGraph {
     private static CalledFromList cfl;
     private static String calledFrom = "";
     private static JCallGraph jCallGraph = null;
+    private static Map<String, List<Metric>> metricList;
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
@@ -131,12 +130,12 @@ public class JCallGraph {
                         }
                     }
                 });
-                readJavaFiles();
 
                 BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 log.write(methodCalls.toString());
                 log.close();
             }
+            readJavaFiles();
             createCSV2();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
@@ -155,39 +154,52 @@ public class JCallGraph {
         ZipFile zipFile = new ZipFile("callgraph.zip");
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         JavaFile jFile;
-        boolean exit = false;
+        List<Metric> metricListAux;
+        String className = "";
+        ZipEntry entry;
+        InputStream stream;
+        metricList = new HashMap<>();
         while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            InputStream stream = zipFile.getInputStream(entry);
-            jFile = new JavaFile(stream);
-            jFile.readFile();        
+            entry = entries.nextElement();
+            stream = zipFile.getInputStream(entry);
+            className = entry.getName();
+            className = className.substring(0, className.lastIndexOf("."));
+            jFile = new JavaFile(stream, className);
+            metricListAux = jFile.calculateMetrics();
+            if (metricListAux.size() > 0) {
+                metricList.put(className, metricListAux);
+            }
         }
     }
 
-    public static void addMetrics(String methodName, int LOC, int sourceLine, int complexity){
-        MethodReport method = methodCalls.get(methodName);
-        continue;
+    public static void addMetrics(List<Metric> metricList, String className) {
+        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) {
+            Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
+            if (!entrySet.isEmpty() && entrySet.iterator().next().getKey().getPaquete().contains(className)) {
+                for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+                    for (Metric m : metricList) {
+                        if (entry.getKey().getNombre().equals(m.getMethodName())) {
+                            entry.getKey().setLOC(m.getLOC());
+                            metricList.remove(m);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    // methodAux = getMethodReport(line);
-    // methodAux.setLineaClase(lineNumber);
-    // i = 0;
-    // for (; i < methodAux.getUltimaLinea(); i++) { // Se saltan las lineas del
-    // método
-    // br.readLine();
-    // }
-    // lineNumber += i;
-    // while ((line = br.readLine()) != null) {
-    // if
-    // }
-    // exit = true;
-
-    
-
-    // public static MethodReport getMethodReport(String line) {
-
-    // }
-
+    public static MethodReport addMetric(String methodName, Metric metric) {
+        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) {
+            for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+                if (entry.getKey().getNombre().equals(methodName)) {
+                    entry.getKey().setLOC(metric.getLOC());
+                    entry.getKey().setLineaClase(metric.getCyclomatiComplexity());
+                }
+            }
+        }
+        return null;
+    }
 
     public static void createCSV2() throws IOException {
         File dir = null;
@@ -204,7 +216,6 @@ public class JCallGraph {
             for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) { // Recorrer .class
                 Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
                 if (!entrySet.isEmpty()) {
-                    // MethodReport f = (MethodReport) map.keySet().toArray()[0];
                     String name = "/" + entrySet.iterator().next().getKey().getPaquete() + ".csv";
                     fileWriter = new FileWriter(dir + name);
                     writer = new BufferedWriter(fileWriter);
@@ -217,8 +228,16 @@ public class JCallGraph {
                                 calledFrom = cfl.getCalledMap()
                                         .get(entry.getKey().getPaquete() + entry.getKey().getNombre()).toString();
                             }
-                            csvPrinter.printRecord(entry.getKey().getNombre(), 0, entry.getKey().getLOC(),
-                                    entry.getKey().getResultado(), entry.getKey().getLineaClase(), calledFrom);
+                            String clase = entry.getKey().getPaquete();
+                            Metric metric = getMetric(clase.substring(clase.indexOf(".") + 1),
+                                    entry.getKey().getNombre());
+                            if (metric == null) {
+                                csvPrinter.printRecord(entry.getKey().getNombre(), 0, "-",
+                                        entry.getKey().getResultado(), "-", calledFrom);
+                            } else {
+                                csvPrinter.printRecord(entry.getKey().getNombre(), 0, metric.getLOC(),
+                                        entry.getKey().getResultado(), metric.getSourceLine(), calledFrom);
+                            }
                             calledFrom = "";
                             // Recorrer hijos
                             for (MethodReport method : entry.getValue()) {
@@ -239,6 +258,18 @@ public class JCallGraph {
         }
     }
 
+    public static Metric getMetric(String className, String methodName) {
+        List<Metric> list = metricList.get(className);
+        if (list != null) {
+            for (Metric m : list) {
+                if (methodName.equals(m.getMethodName())) {
+                    return m;
+                }
+            }
+        }
+        return null;
+    }
+
     public static void printHijos(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level)
             throws IOException {
         if (!visitedMethods.contains(method)) {
@@ -246,8 +277,15 @@ public class JCallGraph {
             if (cfl.getCalledMap().containsKey(method.getPaquete() + method.getNombre())) {
                 calledFrom = cfl.getCalledMap().get(method.getPaquete() + method.getNombre()).toString();
             }
-            csvPrinter.printRecord(method.getNombre(), level, method.getLOC(), method.getResultado(),
-                    method.getLineaClase(), calledFrom);
+            String clase = method.getPaquete();
+            Metric metric = getMetric(clase.substring(clase.indexOf(".") + 1), method.getNombre());
+            if (metric == null) {
+                csvPrinter.printRecord(method.getNombre(), level, "-", method.getResultado(), "-",
+                        calledFrom);
+            } else {
+                csvPrinter.printRecord(method.getNombre(), level, metric.getLOC(), method.getResultado(),
+                metric.getSourceLine(), calledFrom);
+            }
             calledFrom = "";
             if (method != null && map != null && !map.isEmpty()) {
                 for (MethodReport aux : map.get(method)) {

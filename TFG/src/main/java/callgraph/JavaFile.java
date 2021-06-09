@@ -6,39 +6,47 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class JavaFile {
 
     private InputStream stream;
-    private int fileCount;
+    private String fileName;
     private BufferedReader br;
-    private JCallGraph jCallGraph ;
+    private List<Metric> metricList;
+    private int lineNumber;
+    private int cyclomatiComplexity;
+    private int fileLineCount;
+    private int fileLineCountAux;
+    private int sourceLine;
 
-    public JavaFile(InputStream stream) {
+    public JavaFile(InputStream stream, String fileName) {
         this.stream = stream;
-        jCallGraph = JCallGraph.getJCallGraph();
+        this.fileName = fileName;
+        metricList = new ArrayList<>();
     }
 
-    public void readFile() throws IOException {
+    public List<Metric> calculateMetrics() throws IOException {
         br = new BufferedReader(new InputStreamReader(stream));
         String line;
-        int lineCont = 0;
         String method;
-        file = "";
         while ((line = br.readLine()) != null) {
+            fileLineCount++;
             if (isMethod(line)) {
                 method = getMethodName(line.trim());
-                lineCont = getNumberOfLines();
-                fileCount += lineCont;
-                JCallGraph.addMetrics(file, method, lineCont, fileCount, 0);
-            } else {
-                fileCount++;
+                calculateLineNumber();
+                metricList.add(getMetric(method));
             }
         }
+        return metricList;
+    }
+
+    private Metric getMetric(String methodName) {
+        return new Metric(methodName, lineNumber, cyclomatiComplexity, sourceLine);
     }
 
     private boolean isMethod(String line) {
-        if ((line.trim().startsWith("public") || line.trim().startsWith("private")) && !line.contains("class")
+        if ((line.trim().startsWith("public") || line.trim().startsWith("private")) && !line.contains("class") && !line.contains("final")
                 && !line.contains("interface") && !line.contains("enum") && !line.contains(";")) {
             return true;
         }
@@ -46,6 +54,7 @@ public class JavaFile {
     }
 
     private String getMethodName(String line) {
+        sourceLine = fileLineCount;
         line = line.trim();
         String methodName = "";
         int end = line.indexOf("(");
@@ -59,12 +68,14 @@ public class JavaFile {
         return subStrings.get(subStrings.size() - 1);
     }
 
-    private int getNumberOfLines() throws IOException {
-        int count = 0;
+    private void calculateLineNumber() throws IOException {
+        lineNumber = 0;
+        fileLineCountAux = 0;
         boolean commentBegan = false;
         String line = null;
 
         while ((line = br.readLine()) != null) {
+            fileLineCount++;
             if (isMethod(line)) {
                 br.reset();
                 break;
@@ -84,19 +95,19 @@ public class JavaFile {
                     continue;
             }
             if (isSourceCodeLine(line)) {
-                count++;
+                lineNumber++;
             }
             if (commentBegan(line)) {
                 commentBegan = true;
             }
             if (line.contains("}")) {
                 br.mark(100);
+                fileLineCountAux = fileLineCount;
             }
         }
-        if ((line = br.readLine()) == null) {
-            count--;
-        }
-        return count;
+        // if ((line = br.readLine()) == null) {
+        //     lineNumber--;
+        // }
     }
 
     private boolean commentBegan(String line) {
@@ -191,4 +202,21 @@ public class JavaFile {
         }
         return isSourceCodeLine;
     }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public List<Metric> getMetricList() {
+        return metricList;
+    }
+
+    public void setMetricList(List<Metric> metricList) {
+        this.metricList = metricList;
+    }
+
 }

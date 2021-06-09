@@ -86,7 +86,7 @@ public class MethodVisitor extends EmptyVisitor {
             lineaClase = (mg.getLineNumbers()[0].getSourceLine()) - 1;
             LOC = getLineNumbers(lineaClase, mg);
         }
-        method = new MethodReport(mg.getName(), mg.getClassName(), LOC, mg.getReturnType().toString(), lineaClase, "A");
+        method = new MethodReport(mg.getName(), mg.getClassName(), 0, mg.getReturnType().toString(), 0, "A");
 
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
             if (mg.isAbstract() || mg.isNative())
@@ -123,8 +123,8 @@ public class MethodVisitor extends EmptyVisitor {
                         sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
                         LOC = getLineNumbers(sourceLine, mgAUx);
                     }
-                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), LOC,
-                            mgAUx.getReturnType().toString(), sourceLine, "A");
+                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
+                            mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
                             this.visitedClass.getClassName())) {
                         methodCalls.add(m);
@@ -152,8 +152,8 @@ public class MethodVisitor extends EmptyVisitor {
                         sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
                         LOC = getLineNumbers(sourceLine, mgAUx);
                     }
-                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), LOC,
-                            mgAUx.getReturnType().toString(), sourceLine, "A");
+                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
+                            mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
                             this.visitedClass.getClassName())) {
                         methodCalls.add(m);
@@ -181,8 +181,8 @@ public class MethodVisitor extends EmptyVisitor {
                         sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
                         LOC = getLineNumbers(sourceLine, mgAUx);
                     }
-                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), LOC,
-                            mgAUx.getReturnType().toString(), sourceLine, "A");
+                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
+                            mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
                             this.visitedClass.getClassName())) {
                         methodCalls.add(m);
@@ -210,8 +210,8 @@ public class MethodVisitor extends EmptyVisitor {
                         sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
                         LOC = getLineNumbers(sourceLine, mgAUx);
                     }
-                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), LOC,
-                            mgAUx.getReturnType().toString(), sourceLine, "A");
+                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
+                            mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
                             this.visitedClass.getClassName())) {
                         methodCalls.add(m);
@@ -239,8 +239,8 @@ public class MethodVisitor extends EmptyVisitor {
                         sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
                         LOC = getLineNumbers(sourceLine, mgAUx);
                     }
-                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), LOC,
-                            mgAUx.getReturnType().toString(), sourceLine, "A");
+                    MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
+                            mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
                             this.visitedClass.getClassName())) {
                         methodCalls.add(m);
@@ -272,21 +272,22 @@ public class MethodVisitor extends EmptyVisitor {
     }
 
     private int getLineNumbers(int sourceLine, MethodGen pMg) {
-        LineNumberGen[] lng = pMg.getLineNumbers();
-        int lineNumbers = lng[lng.length - 1].getSourceLine() - sourceLine;
-        if (lng[lng.length - 1].getInstruction().toString().contains(" return")) {
-            lineNumbers = lng[lng.length - 2].getSourceLine() - sourceLine;
-            if (lng[lng.length - 2].getInstruction().getNext()!=null) {
-                lineNumbers++;
-            }
-        }
-        // else if (lng[lng.length-1].getInstruction().getNext()!=null) {
-        // lineNumbers++;
+        // LineNumberGen[] lng = pMg.getLineNumbers();
+        // int lineNumbers = lng[lng.length - 1].getSourceLine() - sourceLine;
+        // if (lng[lng.length - 1].getInstruction().toString().contains(" return")) {
+        //     lineNumbers = lng[lng.length - 2].getSourceLine() - sourceLine;
+        //     if (lng[lng.length - 2].getInstruction().getNext()!=null) {
+        //         lineNumbers++;
+        //     }
         // }
-        if (lineNumbers==0) {
-            return 1;
-        }
-        return lineNumbers;
+        // // else if (lng[lng.length-1].getInstruction().getNext()!=null) {
+        // // lineNumbers++;
+        // // }
+        // if (lineNumbers==0) {
+        //     return 1;
+        // }
+        // return lineNumbers;
+        return 0;
     }
 
     // private int getLastLine(MethodGen pMg) {
