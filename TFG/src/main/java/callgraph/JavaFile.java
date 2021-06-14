@@ -46,9 +46,13 @@ public class JavaFile {
     }
 
     private boolean isMethod(String line) {
-        if ((line.trim().startsWith("public") || line.trim().startsWith("private")) && !line.contains("class") && !line.contains("final")
-                && !line.contains("interface") && !line.contains("enum") && !line.contains(";")) {
-            return true;
+        line = line.trim();
+        if ((line.startsWith("public") || line.startsWith("private")) && !line.contains(";") && line.contains("(")) {
+            line = line.substring(0, line.lastIndexOf("("));
+            if (!line.contains("class") && !line.contains("final") && !line.contains("interface")
+                    && !line.contains("enum")) {
+                return true;
+            }
         }
         return false;
     }
@@ -105,8 +109,9 @@ public class JavaFile {
                 fileLineCountAux = fileLineCount;
             }
         }
+        fileLineCount = fileLineCountAux;
         // if ((line = br.readLine()) == null) {
-        //     lineNumber--;
+        // lineNumber--;
         // }
     }
 

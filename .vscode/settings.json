@@ -1,8 +1,6 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "workbench.editorAssociations": [
-    
-    ],
+    "workbench.editorAssociations": {},
     "workbench.colorCustomizations": {
         "terminal.background":"#090300",
         "terminal.foreground":"#A5A2A2",
