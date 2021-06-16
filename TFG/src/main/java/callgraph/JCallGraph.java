@@ -65,6 +65,10 @@ import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.github.mauricioaniche.ck.CK;
+import com.github.mauricioaniche.ck.CKClassResult;
+import com.github.mauricioaniche.ck.Runner;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.codehaus.plexus.util.FileUtils;
@@ -139,6 +143,14 @@ public class JCallGraph {
             createCSV2();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
+            e.printStackTrace();
+        }
+        String[] runArgs = {"D:\\UNIVERSIDAD\\TFG\\Repositorio\\TFG\\TFG\\src"};
+        try {
+            //Runner.
+              
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
