@@ -2,6 +2,8 @@ package com.github.mauricioaniche.ck;
 
 import java.io.IOException;
 
+import callgraph.JCallGraph;
+
 public class Runner {
 
 	public static void main(String[] args) throws IOException {
@@ -30,12 +32,13 @@ public class Runner {
 
 
 		ResultWriter writer = new ResultWriter("class.csv", "method.csv", "variable.csv", "field.csv", variablesAndFields);
-		
+		JCallGraph jCallGraph = new JCallGraph();
 		new CK(useJars, maxAtOnce, variablesAndFields).calculate(path, new CKNotifier() {
 			@Override
 			public void notify(CKClassResult result) {
 				try {
 					writer.printResult(result);
+					jCallGraph.addCKMetrics(result);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

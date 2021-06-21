@@ -10,6 +10,7 @@ public class MethodReport {
     private int lineaClase;
     private String tipo;
     private int ultimaLinea;
+    private int wmc;
 
     public MethodReport() {
 
@@ -98,4 +99,11 @@ public class MethodReport {
         this.ultimaLinea = ultimaLinea;
     }
 
+    public int getWmc() {
+        return wmc;
+    }
+
+    public void setWmc(int wmc) {
+        this.wmc = wmc;
+    }
 }
