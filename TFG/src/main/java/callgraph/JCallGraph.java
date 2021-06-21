@@ -145,9 +145,7 @@ public class JCallGraph {
             String[] runArgs = { args[3] };
             try {
                 Runner.main(runArgs);
-
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             createCSV2();

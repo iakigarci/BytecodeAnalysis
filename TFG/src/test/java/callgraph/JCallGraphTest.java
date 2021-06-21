@@ -32,10 +32,11 @@ public class JCallGraphTest {
 
     @Test 
     void testMain4() {
-        String[] s = new String[3];
+        String[] s = new String[4];
         s[0] = "ProyectoAnalizarExtendido.jar";
         s[1] = "paquete";
         s[2] = "*,";
+        s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\ProyectoAnalizarExtendido-master\\src";
         JCallGraph.main(s);
     }
 
