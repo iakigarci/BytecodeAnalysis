@@ -69,6 +69,7 @@ import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKClassResult;
 import com.github.mauricioaniche.ck.CKMethodResult;
 import com.github.mauricioaniche.ck.Runner;
+import com.github.mauricioaniche.ck.metric.MethodLevelMetric;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -141,7 +142,7 @@ public class JCallGraph {
                 log.close();
             }
             // readJavaFiles();
-            String[] runArgs = { "D:\\UNIVERSIDAD\\TFG\\Repositorio\\TFG\\TFG\\src" };
+            String[] runArgs = { args[3] };
             try {
                 Runner.main(runArgs);
 
@@ -202,6 +203,7 @@ public class JCallGraph {
                         }
                     }
                 }
+                break;
             }
         }
     }
@@ -262,8 +264,13 @@ public class JCallGraph {
                                 calledFrom = cfl.getCalledMap()
                                         .get(entry.getKey().getPaquete() + entry.getKey().getNombre()).toString();
                             }
-                            csvPrinter.printRecord(entry.getKey().getNombre(), 0, entry.getKey().getLOC(), entry.getKey().getWmc(),
-                                    entry.getKey().getResultado(), entry.getKey().getLineaClase(), calledFrom);
+                            csvPrinter.printRecord(entry.getKey().getNombre(), 
+                                                    0, 
+                                                    entry.getKey().getLOC(), 
+                                                    entry.getKey().getWmc(),
+                                                    entry.getKey().getResultado(),
+                                                    entry.getKey().getLineaClase(), 
+                                                    calledFrom);
 
                             calledFrom = "";
                             // Recorrer hijos
@@ -297,6 +304,15 @@ public class JCallGraph {
         return null;
     }
 
+    public static MethodReport getKey(MethodReport method, HashMap<MethodReport, List<MethodReport>> map) {
+        for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+            if (entry.getKey().equals(method)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public static void printHijos(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level)
             throws IOException {
         if (!visitedMethods.contains(method)) {
@@ -304,8 +320,25 @@ public class JCallGraph {
             if (cfl.getCalledMap().containsKey(method.getPaquete() + method.getNombre())) {
                 calledFrom = cfl.getCalledMap().get(method.getPaquete() + method.getNombre()).toString();
             }
-            csvPrinter.printRecord(method.getNombre(), level, method.getLOC(), method.getWmc(), method.getResultado(),
-                    method.getLineaClase(), calledFrom);
+            MethodReport methodMetric = getKey(method, map);
+            if (methodMetric != null) {
+                csvPrinter.printRecord(methodMetric.getNombre(), 
+                level,
+                methodMetric.getLOC(),
+                methodMetric.getWmc(),
+                methodMetric.getResultado(),
+                methodMetric.getLineaClase(),
+                calledFrom); 
+            }else{
+                csvPrinter.printRecord(method.getNombre(), 
+                                    level,
+                                    method.getLOC(),
+                                    method.getWmc(),
+                                    method.getResultado(),
+                                    method.getLineaClase(),
+                                    calledFrom);
+            }
+            
             calledFrom = "";
             if (method != null && map != null && !map.isEmpty()) {
                 for (MethodReport aux : map.get(method)) {

@@ -41,10 +41,11 @@ public class JCallGraphTest {
 
     @Test 
     void testMain5() {
-        String[] s = new String[3];
+        String[] s = new String[4];
         s[0] = "TFG-0.1-static.jar";
         s[1] = "callgraph";
         s[2] = "apache";
+        s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\TFG\\TFG\\src";
         JCallGraph.main(s);
     }
 
