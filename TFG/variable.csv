@@ -1,9 +1,0 @@
-file,class,method,variable,usage
-D:\UNIVERSIDAD\TFG\Repositorio\ProyectoAnalizarExtendido-master\src\paquete\ClaseAbstracta.java,paquete.ClaseAbstracta,noOverride/0,a,1
-D:\UNIVERSIDAD\TFG\Repositorio\ProyectoAnalizarExtendido-master\src\paquete\ClaseAbstracta.java,paquete.ClaseAbstracta,noOverride/0,t,1
-D:\UNIVERSIDAD\TFG\Repositorio\ProyectoAnalizarExtendido-master\src\paquete\InstanciaAbstracta.java,paquete.InstanciaAbstracta,siOverride/0,t,1
-D:\UNIVERSIDAD\TFG\Repositorio\ProyectoAnalizarExtendido-master\src\paquete\InstanciaInterfaz.java,paquete.InstanciaInterfaz,fInterfaz/0,t,1
-D:\UNIVERSIDAD\TFG\Repositorio\ProyectoAnalizarExtendido-master\src\paquete\Main.java,paquete.Main,main/1[java.lang.String[]],args,0
-D:\UNIVERSIDAD\TFG\Repositorio\ProyectoAnalizarExtendido-master\src\paquete\Main.java,paquete.Main,main/1[java.lang.String[]],t,1
-D:\UNIVERSIDAD\TFG\Repositorio\ProyectoAnalizarExtendido-master\src\paquete\Main.java,paquete.Main,f1/0,s,1
-D:\UNIVERSIDAD\TFG\Repositorio\ProyectoAnalizarExtendido-master\src\paquete\Main.java,paquete.Main,f1/0,l,1

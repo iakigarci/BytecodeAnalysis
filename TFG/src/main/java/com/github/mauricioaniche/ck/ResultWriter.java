@@ -2,9 +2,14 @@ package com.github.mauricioaniche.ck;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class ResultWriter {
@@ -88,16 +93,24 @@ public class ResultWriter {
      * @throws IOException If headers cannot be written
      */
     public ResultWriter(String classFile, String methodFile, String variableFile, String fieldFile, boolean variablesAndFields) throws IOException {
-        FileWriter classOut = new FileWriter(classFile);
+        File dir = null;
+        String dirName = System.getProperty("user.dir") + "/metrics/";
+        Path path = Paths.get(dirName);
+        dir = new File(dirName);
+        if (Files.exists(path)) {
+            FileUtils.deleteDirectory(dir);
+        }
+        dir.mkdir();
+        FileWriter classOut = new FileWriter(dir + "/" +classFile);
         this.classPrinter = new CSVPrinter(classOut, CSVFormat.DEFAULT.withHeader(CLASS_HEADER));
-        FileWriter methodOut = new FileWriter(methodFile);
+        FileWriter methodOut = new FileWriter(dir + "/" + methodFile);
         this.methodPrinter = new CSVPrinter(methodOut, CSVFormat.DEFAULT.withHeader(METHOD_HEADER));
 
-        this.variablesAndFields = variablesAndFields;
+        this.variablesAndFields = variablesAndFields; 
         if(variablesAndFields) {
-            FileWriter variableOut = new FileWriter(variableFile);
+            FileWriter variableOut = new FileWriter(dir + "/" + variableFile);
             this.variablePrinter = new CSVPrinter(variableOut, CSVFormat.DEFAULT.withHeader(VAR_FIELD_HEADER));
-            FileWriter fieldOut = new FileWriter(fieldFile);
+            FileWriter fieldOut = new FileWriter(dir + "/" + fieldFile);
             this.fieldPrinter = new CSVPrinter(fieldOut, CSVFormat.DEFAULT.withHeader(VAR_FIELD_HEADER));
         }
     }

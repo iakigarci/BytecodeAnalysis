@@ -73,6 +73,7 @@ import com.github.mauricioaniche.ck.metric.MethodLevelMetric;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.lang.time.StopWatch;
 import org.codehaus.plexus.util.FileUtils;
 
 import org.apache.bcel.classfile.ClassParser;
@@ -97,6 +98,8 @@ public class JCallGraph {
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         Function<ClassParser, ClassVisitor> getClassVisitor = (ClassParser cp) -> {
             try {
                 return new ClassVisitor(cp.parse());
@@ -127,6 +130,7 @@ public class JCallGraph {
                 entries.forEach(e -> {
                     if (!e.isDirectory() && e.getName().endsWith(".class")) {
                         if (isPackage(e.getName())) {
+                            System.out.println("Callgraph de --> " + e.getName());
                             ClassParser cp = new ClassParser(args[0], e.getName());
                             HashMap<MethodReport, List<MethodReport>> map = getClassVisitor.apply(cp).start()
                                     .methodCalls();
@@ -137,18 +141,23 @@ public class JCallGraph {
                     }
                 });
 
-                BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
-                log.write(methodCalls.toString());
-                log.close();
+                // BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
+                // log.write(methodCalls.toString());
+                // log.close();
             }
             // readJavaFiles();
+            System.out.println("Terminado Callgraph");
+            System.out.println("[CALLGRAPH] Tiempo transcurrido -> " + stopWatch);
             String[] runArgs = { args[3] };
             try {
                 Runner.main(runArgs);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            System.out.println("[METRICS] Tiempo transcurrido -> " + stopWatch);
             createCSV2();
+            System.out.println("[FINAL] Tiempo transcurrido -> " + stopWatch);
+            stopWatch.stop();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
@@ -187,10 +196,10 @@ public class JCallGraph {
 
     public static void addCKMetrics(CKClassResult result) {
         String className = result.getClassName();
-        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) {
+        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) { // Iterar .class
             Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
             if (!entrySet.isEmpty() && entrySet.iterator().next().getKey().getPaquete().contains(className)) {
-                for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+                for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) { // Iterar keys
                     for (CKMethodResult method : result.getMethods()) {
                         if (method.getMethodName().contains(entry.getKey().getNombre())) {
                             // Meter metricas
@@ -236,6 +245,7 @@ public class JCallGraph {
     }
 
     public static void createCSV2() throws IOException {
+        System.out.println("IMPRIMIENDO CSV...\n");
         File dir = null;
         String dirName = System.getProperty("user.dir") + "/csv/";
         Path path = Paths.get(dirName);
@@ -252,6 +262,7 @@ public class JCallGraph {
                 if (!entrySet.isEmpty()) {
                     String name = "/" + entrySet.iterator().next().getKey().getPaquete() + ".csv";
                     fileWriter = new FileWriter(dir + name);
+                    System.out.println("IMPRIMIENDO " + dir + name + "... \n");
                     writer = new BufferedWriter(fileWriter);
                     csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "WMC",
                             "Resultado", "Linea en clase", "Llamado por"));
