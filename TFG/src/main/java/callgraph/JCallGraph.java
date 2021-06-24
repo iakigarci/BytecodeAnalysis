@@ -130,7 +130,7 @@ public class JCallGraph {
                 entries.forEach(e -> {
                     if (!e.isDirectory() && e.getName().endsWith(".class")) {
                         if (isPackage(e.getName())) {
-                            System.out.println("Callgraph de --> " + e.getName());
+                            System.out.println("[CALLGRAPH]: " + e.getName());
                             ClassParser cp = new ClassParser(args[0], e.getName());
                             HashMap<MethodReport, List<MethodReport>> map = getClassVisitor.apply(cp).start()
                                     .methodCalls();
@@ -146,17 +146,16 @@ public class JCallGraph {
                 // log.close();
             }
             // readJavaFiles();
-            System.out.println("Terminado Callgraph");
-            System.out.println("[CALLGRAPH] Tiempo transcurrido -> " + stopWatch);
+            System.out.println("[CALLGRAPH]: Tiempo transcurrido -> " + stopWatch +"\n");
             String[] runArgs = { args[3] };
             try {
                 Runner.main(runArgs);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("[METRICS] Tiempo transcurrido -> " + stopWatch);
+            System.out.println("[METRICAS]: Tiempo transcurrido -> " + stopWatch+"\n");
             createCSV2();
-            System.out.println("[FINAL] Tiempo transcurrido -> " + stopWatch);
+            System.out.println("[FINAL]: Tiempo transcurrido -> " + stopWatch+"\n");
             stopWatch.stop();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
@@ -245,7 +244,6 @@ public class JCallGraph {
     }
 
     public static void createCSV2() throws IOException {
-        System.out.println("IMPRIMIENDO CSV...\n");
         File dir = null;
         String dirName = System.getProperty("user.dir") + "/csv/";
         Path path = Paths.get(dirName);
@@ -262,7 +260,7 @@ public class JCallGraph {
                 if (!entrySet.isEmpty()) {
                     String name = "/" + entrySet.iterator().next().getKey().getPaquete() + ".csv";
                     fileWriter = new FileWriter(dir + name);
-                    System.out.println("IMPRIMIENDO " + dir + name + "... \n");
+                    System.out.println("[IMPRIMIR]: " + dir + name);
                     writer = new BufferedWriter(fileWriter);
                     csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "WMC",
                             "Resultado", "Linea en clase", "Llamado por"));

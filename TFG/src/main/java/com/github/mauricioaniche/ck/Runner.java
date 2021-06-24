@@ -26,7 +26,7 @@ public class Runner {
 			maxAtOnce = Integer.parseInt(args[2]);
 
 		// variables and field results?
-		boolean variablesAndFields = true;
+		boolean variablesAndFields = false;
 		if(args.length >= 4)
 			variablesAndFields = Boolean.parseBoolean(args[3]);
 
@@ -37,7 +37,7 @@ public class Runner {
 			public void notify(CKClassResult result) {
 				try {
 					writer.printResult(result);
-					System.out.println("Metricas de" + result.getClassName());
+					System.out.println("[METRICAS]:" + result.getClassName());
 					JCallGraph.addCKMetrics(result);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
