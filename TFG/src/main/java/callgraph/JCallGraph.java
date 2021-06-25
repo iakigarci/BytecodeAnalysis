@@ -140,12 +140,10 @@ public class JCallGraph {
                         }
                     }
                 });
-
                 // BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
                 // log.write(methodCalls.toString());
                 // log.close();
             }
-            // readJavaFiles();
             System.out.println("[CALLGRAPH]: Tiempo transcurrido -> " + stopWatch +"\n");
             String[] runArgs = { args[3] };
             try {
