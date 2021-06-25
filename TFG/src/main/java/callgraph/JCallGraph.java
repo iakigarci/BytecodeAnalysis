@@ -94,7 +94,6 @@ public class JCallGraph {
     private static CalledFromList cfl;
     private static String calledFrom = "";
     private static JCallGraph jCallGraph = null;
-    private static Map<String, List<Metric>> metricList;
 
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
@@ -152,7 +151,7 @@ public class JCallGraph {
                 e.printStackTrace();
             }
             System.out.println("[METRICAS]: Tiempo transcurrido -> " + stopWatch+"\n");
-            createCSV2();
+            createCSV();
             System.out.println("[FINAL]: Tiempo transcurrido -> " + stopWatch+"\n");
             stopWatch.stop();
         } catch (IOException e) {
@@ -169,27 +168,6 @@ public class JCallGraph {
         return jCallGraph;
     }
 
-    public static void readJavaFiles() throws IOException {
-        ZipFile zipFile = new ZipFile("callgraph.zip");
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        JavaFile jFile;
-        List<Metric> metricListAux;
-        String className = "";
-        ZipEntry entry;
-        InputStream stream;
-        metricList = new HashMap<>();
-        while (entries.hasMoreElements()) {
-            entry = entries.nextElement();
-            stream = zipFile.getInputStream(entry);
-            className = entry.getName();
-            className = className.substring(0, className.lastIndexOf("."));
-            jFile = new JavaFile(stream, className);
-            metricListAux = jFile.calculateMetrics();
-            if (metricListAux.size() > 0) {
-                metricList.put(className, metricListAux);
-            }
-        }
-    }
 
     public static void addCKMetrics(CKClassResult result) {
         String className = result.getClassName();
@@ -212,36 +190,7 @@ public class JCallGraph {
         }
     }
 
-    public static void addMetrics(List<Metric> metricList, String className) {
-        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) {
-            Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
-            if (!entrySet.isEmpty() && entrySet.iterator().next().getKey().getPaquete().contains(className)) {
-                for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
-                    for (Metric m : metricList) {
-                        if (entry.getKey().getNombre().equals(m.getMethodName())) {
-                            entry.getKey().setLOC(m.getLOC());
-                            metricList.remove(m);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static MethodReport addMetric(String methodName, Metric metric) {
-        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) {
-            for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
-                if (entry.getKey().getNombre().equals(methodName)) {
-                    entry.getKey().setLOC(metric.getLOC());
-                    entry.getKey().setLineaClase(metric.getCyclomatiComplexity());
-                }
-            }
-        }
-        return null;
-    }
-
-    public static void createCSV2() throws IOException {
+    public static void createCSV() throws IOException {
         File dir = null;
         String dirName = System.getProperty("user.dir") + "/csv/";
         Path path = Paths.get(dirName);
@@ -282,7 +231,7 @@ public class JCallGraph {
                             for (MethodReport method : entry.getValue()) {
                                 if (map.get(method) != null) {
                                     visitedMethods.clear();
-                                    printHijos(method, new HashMap<>(map), 1);
+                                    printChildren(method, new HashMap<>(map), 1);
                                 }
                             }
                         }
@@ -297,28 +246,7 @@ public class JCallGraph {
         }
     }
 
-    public static Metric getMetric(String className, String methodName) {
-        List<Metric> list = metricList.get(className);
-        if (list != null) {
-            for (Metric m : list) {
-                if (methodName.equals(m.getMethodName())) {
-                    return m;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static MethodReport getKey(MethodReport method, HashMap<MethodReport, List<MethodReport>> map) {
-        for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
-            if (entry.getKey().equals(method)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    public static void printHijos(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level)
+    public static void printChildren(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level)
             throws IOException {
         if (!visitedMethods.contains(method)) {
             visitedMethods.add(method);
@@ -348,37 +276,20 @@ public class JCallGraph {
             if (method != null && map != null && !map.isEmpty()) {
                 for (MethodReport aux : map.get(method)) {
                     if (aux != null) {
-                        printHijos(aux, map, level + 1);
+                        printChildren(aux, map, level + 1);
                     }
                 }
             }
         }
     }
 
-    public static void createCSV(List<String> methodCalls) throws IOException {
-        File dir = null;
-        dir = new File(System.getProperty("user.dir"));
-        dir.mkdir();
-        BufferedWriter writer = null;
-        CSVPrinter csvPrinter = null;
-        try {
-            writer = Files.newBufferedWriter(Paths.get("prueba.csv"));
-            csvPrinter = new CSVPrinter(writer,
-                    CSVFormat.DEFAULT.withHeader("Nombre", "Paquete", "LOC", "Resultado", "Linea en clase", "Destino"));
-            for (String s : methodCalls) {
-                String[] str = s.split(" ");
-                String[] method = str[0].split("/");
-                csvPrinter.printRecord(method[0], method[1], method[2], method[3], method[4], str[1]);
+    public static MethodReport getKey(MethodReport method, HashMap<MethodReport, List<MethodReport>> map) {
+        for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+            if (entry.getKey().equals(method)) {
+                return entry.getKey();
             }
-
-        } catch (IOException e) {
-            System.err.println("Error while processing jar: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            csvPrinter.close();
-            writer.close();
         }
-
+        return null;
     }
 
     public static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {
