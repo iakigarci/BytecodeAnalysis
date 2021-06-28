@@ -76,13 +76,12 @@ public class JCallGraph {
 
     private static List<String> lInclude;
     private static List<String> lExclude = null;
-    private static List<HashMap<MethodReport, List<MethodReport>>> methodCalls;
     private static List<MethodReport> visitedMethods = new ArrayList<MethodReport>();
     private static CSVPrinter csvPrinter = null;
     private static CalledFromList cfl;
     private static String calledFrom = "";
     private static JCallGraph jCallGraph = null;
-
+    private static MethodCallsList methodCallsList;
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
         StopWatch stopWatch = new StopWatch();
@@ -96,8 +95,8 @@ public class JCallGraph {
         };
 
         try {
+            methodCallsList = MethodCallsList.getMethodCallsList();
             cfl = CalledFromList.getCalledfromlist();
-            methodCalls = new ArrayList<HashMap<MethodReport, List<MethodReport>>>();
             if (args[1].length() != 0) {
                 lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
             } else {
@@ -122,7 +121,7 @@ public class JCallGraph {
                             HashMap<MethodReport, List<MethodReport>> map = getClassVisitor.apply(cp).start()
                                     .methodCalls();
                             if (map != null) {
-                                methodCalls.add(map);
+                                methodCallsList.add(map);
                             }
                         }
                     }
@@ -168,7 +167,7 @@ public class JCallGraph {
         BufferedWriter writer = null;
         FileWriter fileWriter = null;
         try {
-            for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) { // Recorrer .class
+            for (HashMap<MethodReport, List<MethodReport>> map : methodCallsList.getMethodCalls()) { // Recorrer .class
                 Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
                 if (!entrySet.isEmpty()) {
                     String name = "/" + entrySet.iterator().next().getKey().getPaquete() + ".csv";
@@ -215,7 +214,7 @@ public class JCallGraph {
             if (cfl.getCalledMap().containsKey(method.getPaquete() + method.getNombre())) {
                 calledFrom = cfl.getCalledMap().get(method.getPaquete() + method.getNombre()).toString();
             }
-            MethodReport methodMetric = getKey(method, map);
+            MethodReport methodMetric = methodCallsList.getKey(method, map);
             if (methodMetric != null) {
                 csvPrinter.printRecord(methodMetric.getNombre(), level, methodMetric.getLOC(), methodMetric.getWmc(),
                         methodMetric.getResultado(), methodMetric.getLineaClase(), calledFrom);
@@ -237,7 +236,7 @@ public class JCallGraph {
 
     public static void addCKMetrics(CKClassResult result) {
         String className = result.getClassName();
-        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) { // Iterar .class
+        for (HashMap<MethodReport, List<MethodReport>> map : methodCallsList.getMethodCalls()) { // Iterar .class
             Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
             if (!entrySet.isEmpty() && entrySet.iterator().next().getKey().getPaquete().contains(className)) {
                 for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) { // Iterar keys
@@ -254,15 +253,6 @@ public class JCallGraph {
                 break;
             }
         }
-    }
-
-    public static MethodReport getKey(MethodReport method, HashMap<MethodReport, List<MethodReport>> map) {
-        for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
-            if (entry.getKey().equals(method)) {
-                return entry.getKey();
-            }
-        }
-        return null;
     }
 
     public static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {

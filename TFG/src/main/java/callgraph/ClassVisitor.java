@@ -50,8 +50,8 @@ public class ClassVisitor extends EmptyVisitor {
     private ConstantPoolGen constants;
     private String classReferenceFormat;
     private final DynamicCallManager DCManager = new DynamicCallManager();
-    private HashMap<MethodReport,List<MethodReport>> methodCalls = new LinkedHashMap<>();
     private List<MethodGen> methodGenList = new ArrayList<>();
+    private HashMap<MethodReport,List<MethodReport>> methodCalls = new LinkedHashMap<>();
 
     public ClassVisitor(JavaClass jc) {
         clazz = jc;
