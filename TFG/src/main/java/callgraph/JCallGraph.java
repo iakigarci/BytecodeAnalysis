@@ -28,18 +28,11 @@
 
 package callgraph;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.UncheckedIOException;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,7 +43,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -62,14 +54,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKClassResult;
 import com.github.mauricioaniche.ck.CKMethodResult;
 import com.github.mauricioaniche.ck.Runner;
-import com.github.mauricioaniche.ck.metric.MethodLevelMetric;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -143,16 +131,16 @@ public class JCallGraph {
                 // log.write(methodCalls.toString());
                 // log.close();
             }
-            System.out.println("[CALLGRAPH]: Tiempo transcurrido -> " + stopWatch +"\n");
+            System.out.println("[CALLGRAPH]: Tiempo transcurrido -> " + stopWatch + "\n");
             String[] runArgs = { args[3] };
             try {
                 Runner.main(runArgs);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("[METRICAS]: Tiempo transcurrido -> " + stopWatch+"\n");
+            System.out.println("[METRICAS]: Tiempo transcurrido -> " + stopWatch + "\n");
             createCSV();
-            System.out.println("[FINAL]: Tiempo transcurrido -> " + stopWatch+"\n");
+            System.out.println("[FINAL]: Tiempo transcurrido -> " + stopWatch + "\n");
             stopWatch.stop();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
@@ -166,28 +154,6 @@ public class JCallGraph {
             jCallGraph = new JCallGraph();
         }
         return jCallGraph;
-    }
-
-
-    public static void addCKMetrics(CKClassResult result) {
-        String className = result.getClassName();
-        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) { // Iterar .class
-            Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
-            if (!entrySet.isEmpty() && entrySet.iterator().next().getKey().getPaquete().contains(className)) {
-                for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) { // Iterar keys
-                    for (CKMethodResult method : result.getMethods()) {
-                        if (method.getMethodName().contains(entry.getKey().getNombre())) {
-                            // Meter metricas
-                            entry.getKey().setLOC(method.getLoc());
-                            entry.getKey().setLineaClase(method.getStartLine());
-                            entry.getKey().setWmc(method.getWmc());
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-        }
     }
 
     public static void createCSV() throws IOException {
@@ -218,13 +184,9 @@ public class JCallGraph {
                                 calledFrom = cfl.getCalledMap()
                                         .get(entry.getKey().getPaquete() + entry.getKey().getNombre()).toString();
                             }
-                            csvPrinter.printRecord(entry.getKey().getNombre(), 
-                                                    0, 
-                                                    entry.getKey().getLOC(), 
-                                                    entry.getKey().getWmc(),
-                                                    entry.getKey().getResultado(),
-                                                    entry.getKey().getLineaClase(), 
-                                                    calledFrom);
+                            csvPrinter.printRecord(entry.getKey().getNombre(), 0, entry.getKey().getLOC(),
+                                    entry.getKey().getWmc(), entry.getKey().getResultado(),
+                                    entry.getKey().getLineaClase(), calledFrom);
 
                             calledFrom = "";
                             // Recorrer hijos
@@ -255,23 +217,13 @@ public class JCallGraph {
             }
             MethodReport methodMetric = getKey(method, map);
             if (methodMetric != null) {
-                csvPrinter.printRecord(methodMetric.getNombre(), 
-                level,
-                methodMetric.getLOC(),
-                methodMetric.getWmc(),
-                methodMetric.getResultado(),
-                methodMetric.getLineaClase(),
-                calledFrom); 
-            }else{
-                csvPrinter.printRecord(method.getNombre(), 
-                                    level,
-                                    method.getLOC(),
-                                    method.getWmc(),
-                                    method.getResultado(),
-                                    method.getLineaClase(),
-                                    calledFrom);
+                csvPrinter.printRecord(methodMetric.getNombre(), level, methodMetric.getLOC(), methodMetric.getWmc(),
+                        methodMetric.getResultado(), methodMetric.getLineaClase(), calledFrom);
+            } else {
+                csvPrinter.printRecord(method.getNombre(), level, method.getLOC(), method.getWmc(),
+                        method.getResultado(), method.getLineaClase(), calledFrom);
             }
-            
+
             calledFrom = "";
             if (method != null && map != null && !map.isEmpty()) {
                 for (MethodReport aux : map.get(method)) {
@@ -283,8 +235,29 @@ public class JCallGraph {
         }
     }
 
+    public static void addCKMetrics(CKClassResult result) {
+        String className = result.getClassName();
+        for (HashMap<MethodReport, List<MethodReport>> map : methodCalls) { // Iterar .class
+            Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
+            if (!entrySet.isEmpty() && entrySet.iterator().next().getKey().getPaquete().contains(className)) {
+                for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) { // Iterar keys
+                    for (CKMethodResult method : result.getMethods()) {
+                        if (method.getMethodName().contains(entry.getKey().getNombre())) {
+                            // Meter metricas
+                            entry.getKey().setLOC(method.getLoc());
+                            entry.getKey().setLineaClase(method.getStartLine());
+                            entry.getKey().setWmc(method.getWmc());
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
     public static MethodReport getKey(MethodReport method, HashMap<MethodReport, List<MethodReport>> map) {
-        for(Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
+        for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
             if (entry.getKey().equals(method)) {
                 return entry.getKey();
             }
