@@ -45,8 +45,8 @@ public class JCallGraphTest {
     @Test 
     void testMain5() {
         String[] s = new String[4];
-        s[0] = "TFG-0.1-static.jar";
-        s[1] = "callgraph";
+        s[0] = "TFG-0.3-static.jar";
+        s[1] = "callgraph,com";
         s[2] = "apache";
         s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\TFG\\TFG\\src";
         JCallGraph.main(s);
@@ -55,7 +55,7 @@ public class JCallGraphTest {
     @Test
     void testMain6() {
         String[] s = new String[3];
-        s[0] = "TFG-0.1.jar";
+        s[0] = "TFG-0.3.jar";
         s[1] = "callgraph,util";
         JCallGraph.main(s);
     }
@@ -156,6 +156,16 @@ public class JCallGraphTest {
         s[1] = "generated";
         s[2] = "*,";
         s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\java-bullshifier-master\\proyectoExtenso\\src";
+        JCallGraph.main(s);
+    }
+
+    @Test 
+    void testMain17() {
+        String[] s = new String[4];
+        s[0] = "TFG-0.3-launcher.jar";
+        s[1] = "callgraph,com";
+        s[2] = "*,";
+        s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\TFG\\TFG\\src";
         JCallGraph.main(s);
     }
 }

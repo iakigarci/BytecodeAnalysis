@@ -28,6 +28,9 @@
   <fileSets>
     <fileSet>
       <includes>
+        <include>com/github/mauricioaniche/ck/*.class</include>
+        <include>com/github/mauricioaniche/ck/metric/*.class</include>
+        <include>com/github/mauricioaniche/ck/util/*.class</include>
         <include>callgraph/*.class</include>
       </includes>
       <directory>target/classes</directory>
