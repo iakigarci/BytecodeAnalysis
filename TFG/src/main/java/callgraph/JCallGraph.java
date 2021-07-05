@@ -28,14 +28,9 @@
 
 package callgraph;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -59,10 +54,10 @@ import com.github.mauricioaniche.ck.CKClassResult;
 import com.github.mauricioaniche.ck.CKMethodResult;
 import com.github.mauricioaniche.ck.Runner;
 
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang.time.StopWatch;
-import org.codehaus.plexus.util.FileUtils;
+
+import callgraph.exporters.CSVExporter;
 
 import org.apache.bcel.classfile.ClassParser;
 
@@ -76,12 +71,12 @@ public class JCallGraph {
 
     private static List<String> lInclude;
     private static List<String> lExclude = null;
-    private static List<MethodReport> visitedMethods = new ArrayList<MethodReport>();
-    private static CSVPrinter csvPrinter = null;
-    private static CalledFromList cfl;
-    private static String calledFrom = "";
+    public static List<MethodReport> visitedMethods = new ArrayList<MethodReport>();
+    public static CSVPrinter csvPrinter = null;
+    public static CalledFromList cfl;
+    public static String calledFrom = "";
     private static JCallGraph jCallGraph = null;
-    private static MethodCallsList methodCallsList;
+    public static MethodCallsList methodCallsList;
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
         StopWatch stopWatch = new StopWatch();
@@ -139,7 +134,8 @@ public class JCallGraph {
                 e.printStackTrace();
             }
             System.out.println("[METRICAS]: Tiempo transcurrido -> " + stopWatch + "\n");
-            createCSV();
+            CSVExporter csvExporter = new CSVExporter();
+            csvExporter.createCSV();
             System.out.println("[FINAL]: Tiempo transcurrido -> " + stopWatch + "\n");
             stopWatch.stop();
         } catch (IOException e) {
@@ -154,85 +150,6 @@ public class JCallGraph {
             jCallGraph = new JCallGraph();
         }
         return jCallGraph;
-    }
-
-    public static void createCSV() throws IOException {
-        File dir = null;
-        String dirName = System.getProperty("user.dir") + "/csv/";
-        Path path = Paths.get(dirName);
-        dir = new File(dirName);
-        if (Files.exists(path)) {
-            FileUtils.deleteDirectory(dir);
-        }
-        dir.mkdir();
-        BufferedWriter writer = null;
-        FileWriter fileWriter = null;
-        try {
-            for (HashMap<MethodReport, List<MethodReport>> map : methodCallsList.getMethodCalls()) { // Recorrer .class
-                Set<Entry<MethodReport, List<MethodReport>>> entrySet = map.entrySet();
-                if (!entrySet.isEmpty()) {
-                    String name = "/" + entrySet.iterator().next().getKey().getPaquete() + ".csv";
-                    fileWriter = new FileWriter(dir + name);
-                    System.out.println("[IMPRIMIR]: " + dir + name);
-                    writer = new BufferedWriter(fileWriter);
-                    csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "WMC",
-                            "Resultado", "Linea en clase", "Llamado por"));
-                    for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
-                        if (isZeroLelel(map, entry.getKey())) {
-                            if (cfl.getCalledMap()
-                                    .containsKey(entry.getKey().getPaquete() + entry.getKey().getNombre())) {
-                                calledFrom = cfl.getCalledMap()
-                                        .get(entry.getKey().getPaquete() + entry.getKey().getNombre()).toString();
-                            }
-                            csvPrinter.printRecord(entry.getKey().getNombre(), 0, entry.getKey().getLOC(),
-                                    entry.getKey().getWmc(), entry.getKey().getResultado(),
-                                    entry.getKey().getLineaClase(), calledFrom);
-
-                            calledFrom = "";
-                            // Recorrer hijos
-                            for (MethodReport method : entry.getValue()) {
-                                if (map.get(method) != null) {
-                                    visitedMethods.clear();
-                                    printChildren(method, new HashMap<>(map), 1);
-                                }
-                            }
-                        }
-                    }
-                    csvPrinter.close();
-                    writer.close();
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error while processing jar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public static void printChildren(MethodReport method, HashMap<MethodReport, List<MethodReport>> map, int level)
-            throws IOException {
-        if (!visitedMethods.contains(method)) {
-            visitedMethods.add(method);
-            if (cfl.getCalledMap().containsKey(method.getPaquete() + method.getNombre())) {
-                calledFrom = cfl.getCalledMap().get(method.getPaquete() + method.getNombre()).toString();
-            }
-            MethodReport methodMetric = methodCallsList.getKey(method, map);
-            if (methodMetric != null) {
-                csvPrinter.printRecord(methodMetric.getNombre(), level, methodMetric.getLOC(), methodMetric.getWmc(),
-                        methodMetric.getResultado(), methodMetric.getLineaClase(), calledFrom);
-            } else {
-                csvPrinter.printRecord(method.getNombre(), level, method.getLOC(), method.getWmc(),
-                        method.getResultado(), method.getLineaClase(), calledFrom);
-            }
-
-            calledFrom = "";
-            if (method != null && map != null && !map.isEmpty()) {
-                for (MethodReport aux : map.get(method)) {
-                    if (aux != null) {
-                        printChildren(aux, map, level + 1);
-                    }
-                }
-            }
-        }
     }
 
     public static void addCKMetrics(CKClassResult result) {
@@ -305,7 +222,7 @@ public class JCallGraph {
         return m.find();
     }
 
-    private static boolean isZeroLelel(HashMap<MethodReport, List<MethodReport>> map, MethodReport m) {
+    public static boolean isZeroLelel(HashMap<MethodReport, List<MethodReport>> map, MethodReport m) {
         if (m.getNombre().contains("init")) {
             return true;
         }
