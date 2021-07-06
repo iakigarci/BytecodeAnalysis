@@ -79,6 +79,8 @@ public class JCallGraph {
     public static MethodCallsList methodCallsList;
     public static void main(String[] args) {
         System.out.println("FICHERO" + Arrays.toString(args));
+        // CliManager cliManager = new CliManager();
+        // cliManager.main(args);
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         Function<ClassParser, ClassVisitor> getClassVisitor = (ClassParser cp) -> {

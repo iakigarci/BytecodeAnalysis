@@ -29,15 +29,8 @@
 
 package callgraph;
 
-import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.LineNumberTable;
 import org.apache.bcel.generic.*;
-
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.bytecode.MethodInfo;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -68,29 +61,12 @@ public class MethodVisitor extends EmptyVisitor {
         cfl = CalledFromList.getCalledfromlist();
     }
 
-    private String argumentList(Type[] arguments) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            if (i != 0) {
-                sb.append(",");
-            }
-            sb.append(arguments[i].toString());
-        }
-        return sb.toString();
-    }
 
     public HashMap<MethodReport, List<MethodReport>> start() {
-        int lineaClase = -1;
-        int LOC = -1;
-        if (mg.getLineNumbers().length != 0) {
-            lineaClase = (mg.getLineNumbers()[0].getSourceLine()) - 1;
-            LOC = getLineNumbers(lineaClase, mg);
-        }
         method = new MethodReport(mg.getName(), mg.getClassName(), 0, mg.getReturnType().toString(), 0, "A");
-
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
             if (mg.isAbstract() || mg.isNative())
-                return (HashMap<MethodReport, List<MethodReport>>) Collections.emptyList();
+                return (HashMap<MethodReport, List<MethodReport>>) Collections.<MethodReport, List<MethodReport>>emptyMap();
 
             for (InstructionHandle ih = mg.getInstructionList().getStart(); ih != null; ih = ih.getNext()) {
                 Instruction i = ih.getInstruction();
@@ -116,13 +92,7 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux != null) {
-                    int sourceLine = -1;
-                    int LOC = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    if (mgAUx.getLineNumbers().length != 0) {
-                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
-                        LOC = getLineNumbers(sourceLine, mgAUx);
-                    }
                     MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
                             mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
@@ -145,13 +115,7 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux != null) {
-                    int sourceLine = -1;
-                    int LOC = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    if (mgAUx.getLineNumbers().length != 0) {
-                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
-                        LOC = getLineNumbers(sourceLine, mgAUx);
-                    }
                     MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
                             mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
@@ -174,13 +138,7 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux != null) {
-                    int sourceLine = -1;
-                    int LOC = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    if (mgAUx.getLineNumbers().length != 0) {
-                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
-                        LOC = getLineNumbers(sourceLine, mgAUx);
-                    }
                     MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
                             mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
@@ -203,13 +161,7 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux != null) {
-                    int sourceLine = -1;
-                    int LOC = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    if (mgAUx.getLineNumbers().length != 0) {
-                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
-                        LOC = getLineNumbers(sourceLine, mgAUx);
-                    }
                     MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
                             mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
@@ -232,13 +184,7 @@ public class MethodVisitor extends EmptyVisitor {
             if (i.getClassName(cp).equals(this.visitedClass.getClassName())) {
                 Method methodAux = this.getMethod(i.getMethodName(cp));
                 if (methodAux != null) {
-                    int sourceLine = -1;
-                    int LOC = -1;
                     MethodGen mgAUx = new MethodGen(methodAux, visitedClass.getClassName(), constants);
-                    if (mgAUx.getLineNumbers().length != 0) {
-                        sourceLine = mgAUx.getLineNumbers()[0].getSourceLine() - 1;
-                        LOC = getLineNumbers(sourceLine, mgAUx);
-                    }
                     MethodReport m = new MethodReport(mgAUx.getName(), mgAUx.getClassName(), 0,
                             mgAUx.getReturnType().toString(), 0, "A");
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
@@ -270,35 +216,4 @@ public class MethodVisitor extends EmptyVisitor {
         }
         return null;
     }
-
-    private int getLineNumbers(int sourceLine, MethodGen pMg) {
-        // LineNumberGen[] lng = pMg.getLineNumbers();
-        // int lineNumbers = lng[lng.length - 1].getSourceLine() - sourceLine;
-        // if (lng[lng.length - 1].getInstruction().toString().contains(" return")) {
-        //     lineNumbers = lng[lng.length - 2].getSourceLine() - sourceLine;
-        //     if (lng[lng.length - 2].getInstruction().getNext()!=null) {
-        //         lineNumbers++;
-        //     }
-        // }
-        // // else if (lng[lng.length-1].getInstruction().getNext()!=null) {
-        // // lineNumbers++;
-        // // }
-        // if (lineNumbers==0) {
-        //     return 1;
-        // }
-        // return lineNumbers;
-        return 0;
-    }
-
-    // private int getLastLine(MethodGen pMg) {
-    //     LineNumberGen[] lng = pMg.getLineNumbers();
-    //     int lastLine = lng[lng.length - 1].getSourceLine();
-    //     if (lng[lng.length - 1].getInstruction().toString().contains(" return")) {
-    //         lastLine = lng[lng.length - 2].getSourceLine();
-    //         if (lng[lng.length - 2].getInstruction().getNext()!=null) {
-    //             lastLine++;
-    //         }
-    //     }
-    //     return 
-    // }
 }

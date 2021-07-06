@@ -3,14 +3,6 @@ package callgraph;
 import org.junit.jupiter.api.Test;
 
 public class JCallGraphTest {
-    @Test
-    void testMain() {
-        String[] s = new String[3];
-        s[0] = "ProyectoAnalizar.jar"; // JAR
-        s[1] = "paquete";              // Include list
-        s[2] = "*,";                    // Exclude list
-        JCallGraph.main(s);
-    }
 
     @Test
     void testMain2() {
@@ -49,23 +41,6 @@ public class JCallGraphTest {
         s[1] = "callgraph,com";
         s[2] = "apache";
         s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\TFG\\TFG\\src";
-        JCallGraph.main(s);
-    }
-
-    @Test
-    void testMain6() {
-        String[] s = new String[3];
-        s[0] = "TFG-0.3.jar";
-        s[1] = "callgraph,util";
-        JCallGraph.main(s);
-    }
-
-    @Test 
-    void testMain7() {
-        String[] s = new String[3];
-        s[0] = "git_java.jar";
-        s[1] = "github";
-        s[2] = "*,";
         JCallGraph.main(s);
     }
 
@@ -166,6 +141,29 @@ public class JCallGraphTest {
         s[1] = "callgraph,com";
         s[2] = "*,";
         s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\TFG\\TFG\\src";
+        JCallGraph.main(s);
+    }
+
+    @Test 
+    void testMain18() {
+        String[] s = new String[9];
+        s[0] = "-jar";
+        s[1] = "ProyectoAnalizarExtendido.jar";
+        s[2] = "-i";
+        s[3] = "paquete";
+        s[4] = "a b ";
+        s[5] = "-e";
+        s[6] = "a ";
+        s[7] = "-s";
+        s[8] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\ProyectoAnalizarExtendido-master\\src";
+        JCallGraph.main(s);
+    }
+
+    @Test 
+    void testMain19() {
+        String[] s = new String[2];
+        s[0] = "-jar";
+        s[1] = " a";
         JCallGraph.main(s);
     }
 }
