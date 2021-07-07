@@ -96,7 +96,7 @@ public class CSVExporter implements IExporter {
             }
     
             JCallGraph.calledFrom = "";
-            if (method != null && map != null && !map.isEmpty()) {
+            if (method != null && map != null && !map.isEmpty() && map.containsKey(method)) {
                 for (MethodReport aux : map.get(method)) {
                     if (aux != null) {
                         printChildren(aux, map, level + 1);

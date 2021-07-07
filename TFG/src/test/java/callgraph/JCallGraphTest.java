@@ -166,4 +166,15 @@ public class JCallGraphTest {
         s[1] = " a";
         JCallGraph.main(s);
     }
+
+    @Test 
+    void testMain20() {
+        String[] s = new String[4];
+        s[0] = "Avanzado.jar";
+        s[1] = "generated";
+        s[2] = "*,";
+        s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\java-bullshifier-master\\Avanzado\\ProjFbfxomckzun\\src";
+        JCallGraph.main(s);
+    }
+    
 }
