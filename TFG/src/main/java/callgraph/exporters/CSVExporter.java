@@ -23,12 +23,15 @@ import callgraph.MethodReport;
 
 public class CSVExporter implements IExporter {
 
+    private String projectName;
 
-
+    public CSVExporter(String projectName) {
+        this.projectName = projectName;
+    }
     @Override
     public void createCSV() throws IOException {
         File dir = null;
-        String dirName = System.getProperty("user.dir") + "/csv/";
+        String dirName = System.getProperty("user.dir") + "/csv/" + projectName;
         Path path = Paths.get(dirName);
         dir = new File(dirName);
         if (Files.exists(path)) {
