@@ -177,4 +177,15 @@ public class JCallGraphTest {
         JCallGraph.main(s);
     }
     
+    @Test 
+    void testMain21() {
+        String[] s = new String[4];
+        s[0] = "Example.jar";
+        s[1] = "";
+        s[2] = "*,";
+        s[3] = "D:\\UNIVERSIDAD\\TFG\\Repositorio\\JCG_comparison\\ExampleProject\\src";
+        JCallGraph.main(s);
+    }
+    
+    
 }

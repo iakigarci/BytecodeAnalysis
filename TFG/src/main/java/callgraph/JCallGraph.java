@@ -196,6 +196,8 @@ public class JCallGraph {
             return false;
         } else if (lInclude.isEmpty() && lExclude.isEmpty()) {
             return true;
+        } else if (lInclude.size()==0) {
+            return true;
         } else if (lExclude.get(0).equals("*")) {
             return isExactSubsecuence(name, lInclude.get(0));
         } else {
