@@ -1,5 +1,9 @@
 @startuml components
 
+class CalledFromList {
+    
+}
+
 class JCallGraph {
     List<String> lPaquetes;
     +main(String[] args);
@@ -67,8 +71,6 @@ package org.apache.bcel {
 
     }
 }
-
-
 
 MethodVisitor -up-|> EmptyVisitor
 ClassVisitor -up-|> EmptyVisitor

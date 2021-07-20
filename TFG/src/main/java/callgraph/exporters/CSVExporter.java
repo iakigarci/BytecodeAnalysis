@@ -48,7 +48,7 @@ public class CSVExporter implements IExporter {
                     fileWriter = new FileWriter(dir + name);
                     System.out.println("[IMPRIMIR]: " + dir + name);
                     writer = new BufferedWriter(fileWriter);
-                    JCallGraph.csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Nombre", "Nivel", "LOC", "WMC",
+                    JCallGraph.csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("LOC", "Nombre", "Nivel",  "WMC",
                             "Resultado", "Linea en clase", "Llamado por"));
                     for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
                         if (JCallGraph.isZeroLelel(map, entry.getKey())) {
@@ -57,7 +57,7 @@ public class CSVExporter implements IExporter {
                                 JCallGraph.calledFrom = JCallGraph.cfl.getCalledMap()
                                         .get(entry.getKey().getPaquete() + entry.getKey().getNombre()).toString();
                             }
-                            JCallGraph.csvPrinter.printRecord(entry.getKey().getNombre(), 0, entry.getKey().getLOC(),
+                            JCallGraph.csvPrinter.printRecord(entry.getKey().getLOC(), entry.getKey().getNombre(), 0, 
                                     entry.getKey().getWmc(), entry.getKey().getResultado(),
                                     entry.getKey().getLineaClase(), JCallGraph.calledFrom);
     
@@ -91,10 +91,10 @@ public class CSVExporter implements IExporter {
             }
             MethodReport methodMetric = JCallGraph.methodCallsList.getKey(method, (HashMap<MethodReport, List<MethodReport>>) map);
             if (methodMetric != null) {
-                JCallGraph.csvPrinter.printRecord(methodMetric.getNombre(), level, methodMetric.getLOC(), methodMetric.getWmc(),
+                JCallGraph.csvPrinter.printRecord(methodMetric.getLOC(), methodMetric.getNombre(), level,  methodMetric.getWmc(),
                         methodMetric.getResultado(), methodMetric.getLineaClase(), JCallGraph.calledFrom);
-            } else {
-                JCallGraph.csvPrinter.printRecord(method.getNombre(), level, method.getLOC(), method.getWmc(),
+            } else { 
+                JCallGraph.csvPrinter.printRecord(method.getLOC(), method.getNombre(), level,  method.getWmc(),
                         method.getResultado(), method.getLineaClase(), JCallGraph.calledFrom);
             }
     
