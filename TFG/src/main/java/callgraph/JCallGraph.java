@@ -137,7 +137,7 @@ public class JCallGraph {
             }
             System.out.println("[METRICAS]: Tiempo transcurrido -> " + stopWatch + "\n");
             CSVExporter csvExporter = new CSVExporter(args[0]);
-            csvExporter.createCSV();
+            csvExporter.create();
             System.out.println("[FINAL]: Tiempo transcurrido -> " + stopWatch + "\n");
             stopWatch.stop();
         } catch (IOException e) {

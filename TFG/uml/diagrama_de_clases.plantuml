@@ -1,15 +1,13 @@
 @startuml components
 
 class CalledFromList {
-    
-}
-
-class JCallGraph {
-    List<String> lPaquetes;
-    +main(String[] args);
-    +createCSV(String methodCalls);
-    +isPackage(String methodName) : boolean
-    +isExactSubsecuence(String source, String subItem): boolean
+    Map<String,List<String>> calledMap;
+    {static} CalledFromList calledFromList;
+    -CalledFromList();
+    +getCalledMap(): Map<String, List<String>>;
+    +getCalledfromlist(): CalledFromList;
+    +add(String method);
+    +addToList(String key, String val);
 }
 
 class ClassVisitor{
@@ -28,47 +26,125 @@ class ClassVisitor{
     +methodCalls() : List<String>;
 }
 
+class CliManager {
+
+}
+
 class DynamicCallManager {
     Map<String, String> dynamicCallers;
     +retrieveCalls(Method method, JavaClass jc);
+    +getMethodNameFromHandleIndex(ConstantPool cp, int callIndex): String;
     +linkCalls(Method method);
+    +getBootstrapMethods(JavaClass jc): BootstrapMethod[];
     +getDynamicCallers() : Map<String, String>;
 }
 
-class MethodVisitor {
-    JavaClass clazz;
-    ConstantPoolGen constants;
-    MethodGen mg;
-    ConstantPoolGen cp;
-    List<String> methodCalls;
-    +MethodVisitor(MethodGen m, JavaClass jc);
-    +argumentList(Type[] arguments): String;
-    +start() : List<String>;
-    +visitInstruction(Instruction i) : boolean;
+class Instrumenter {
+    {static} List<Pattern> pkgIncl;
+    {static} List<Pattern> pkgExcl;
+    +premain(String argument, Instrumentation instrumentation);
+    +transform(ClassLoader loader, String className, Class<?> clazz,
+            java.security.ProtectionDomain domain, byte[] bytes): byte[];
+    -enhanceClass(String name, byte[] b): byte[] ;
+    -enhanceMethod(CtBehavior method, String className);
+    -err(String msg);
 }
 
-package org.apache.bcel.generic {
-    abstract EmptyVisitor {
+class JCallGraph {
+    List<String> lPaquetes;
+    +main(String[] args);
+    +createCSV(String methodCalls);
+    +isPackage(String methodName) : boolean
+    +isExactSubsecuence(String source, String subItem): boolean
+}
 
+class MethodCallsList {
+    {static} MethodCallsList mCallsList;
+    List<Map<MethodReport, List<MethodReport>>> methodCalls;
+    -MethodCallsList();
+    +getMethodCallsList(): MethodCallsList;
+    +getMethodCalls(): List<Map<MethodReport, List<MethodReport>>>;
+    +add(Map<MethodReport, List<MethodReport>> map);
+    +getKey(MethodReport method, Map<MethodReport, List<MethodReport>> map): MethodReport ;
+}
+
+class MethodReport {
+    String nombre;
+    String paquete;
+    int LOC;
+    String resultado;
+    int lineaClase;
+    String tipo;
+    int ultimaLinea;
+    int wmc;
+    +MethodReport(String nombre, String paquete, int ultimaLinea, String resultado, int lineaClase, String tipo);
+    +MethodReport(String nombre);
+    +getNombre(): String;
+    +setNombre(String nombre);
+    +getPaquete(): String ;
+    +setPaquete(String paquete);
+    +getLOC(): int ;
+    +setLOC(int lOC);
+    +getResultado(): String;
+    +setResultado(String resultado);
+    +getLineaClase(): int;
+    +setLineaClase(int lineaClase);
+    +equals(Object obj): boolean ;
+    +hashCode(): int;
+    +toString(): String;
+    +getUltimaLinea(): int;
+    +setUltimaLinea(int ultimaLinea);
+    +getWmc(): int;
+    +setWmc(int wmc);
+}
+
+class MethodVisitor {
+    JavaClass visitedClass;
+    MethodGen mg; 
+    ConstantPoolGen cp;
+    MethodReport method;
+    List<MethodReport> methodCalls;
+    ConstantPoolGen constants;
+    static CalledFromList cfl;
+    List<String> methodCalls;
+    +MethodVisitor(MethodGen m, JavaClass jc, ConstantPoolGen cpg);
+    +argumentList(Type[] arguments): String;
+    +start() : Map<MethodReport, List<MethodReport>>;
+    +visitInstruction(Instruction i) : boolean;
+    +isVisitable() : boolean;
+    +getMethod(String name) : Method;
+}
+
+package callgraph.exporters {
+
+    interface IExporter {
+        create();
+        printChildren(MethodReport method, Map<MethodReport, List<MethodReport>> map, int level);
     }
+
+    class CSVExporter implements IExporter {
+        String projectName;
+        +CSVExporter(String projectName);
+        +create();
+        +printChildren(MethodReport method, Map<MethodReport, List<MethodReport>> map, int level);
+    }
+}
+
+package com.github.mauricioaniche.ck {
+
 }
 
 package org.apache.bcel {
     class JavaClass {
-        -file_name;
-        -package_name;
-        -class_name;
     }
 
     class ConstantPoolGen {
-
     }
-    class MethodGen {
 
+    class MethodGen {
     }
 
     class ConstantPool {
-
     }
 }
 

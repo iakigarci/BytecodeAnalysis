@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.bcel.classfile.Method;
 
 /**
@@ -62,7 +64,7 @@ public class MethodVisitor extends EmptyVisitor {
     }
 
 
-    public HashMap<MethodReport, List<MethodReport>> start() {
+    public Map<MethodReport, List<MethodReport>> start() {
         method = new MethodReport(mg.getName(), mg.getClassName(), 0, mg.getReturnType().toString(), 0, "A");
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
             if (mg.isAbstract() || mg.isNative())

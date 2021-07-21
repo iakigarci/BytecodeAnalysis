@@ -17,7 +17,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.codehaus.plexus.util.FileUtils;
 
-import callgraph.IExporter;
 import callgraph.JCallGraph;
 import callgraph.MethodReport;
 
@@ -28,8 +27,9 @@ public class CSVExporter implements IExporter {
     public CSVExporter(String projectName) {
         this.projectName = projectName;
     }
+    
     @Override
-    public void createCSV() throws IOException {
+    public void create() throws IOException {
         File dir = null;
         String dirName = System.getProperty("user.dir") + "/csv/" + projectName;
         Path path = Paths.get(dirName);
