@@ -1,162 +1,189 @@
 @startuml components
 
-class CalledFromList {
-    Map<String,List<String>> calledMap;
-    {static} CalledFromList calledFromList;
-    -CalledFromList();
-    +getCalledMap(): Map<String, List<String>>;
-    +getCalledfromlist(): CalledFromList;
-    +add(String method);
-    +addToList(String key, String val);
-}
 
-class ClassVisitor{
-    JavaClass clazz;
-    ConstantPoolGen constants;
-    String classReferenceFormat;
-    final DynamicCallManager DCManager;
-    List<String> methodCalls;
-    +visitJavaClass(JavaClass jc);
-    +visitConstantPool(ConstantPool constantPool); 
-    +visitMethod(Method method);
-    +ClassVisitor start();
-    +visitConstantPool(ConstantPool constantPool);
-    +visitMethod(Method method);
-    +start() : ClassVisitor;
-    +methodCalls() : List<String>;
-}
+package callgraph {
 
-class CliManager {
-
-}
-
-class DynamicCallManager {
-    Map<String, String> dynamicCallers;
-    +retrieveCalls(Method method, JavaClass jc);
-    +getMethodNameFromHandleIndex(ConstantPool cp, int callIndex): String;
-    +linkCalls(Method method);
-    +getBootstrapMethods(JavaClass jc): BootstrapMethod[];
-    +getDynamicCallers() : Map<String, String>;
-}
-
-class Instrumenter {
-    {static} List<Pattern> pkgIncl;
-    {static} List<Pattern> pkgExcl;
-    +premain(String argument, Instrumentation instrumentation);
-    +transform(ClassLoader loader, String className, Class<?> clazz,
-            java.security.ProtectionDomain domain, byte[] bytes): byte[];
-    -enhanceClass(String name, byte[] b): byte[] ;
-    -enhanceMethod(CtBehavior method, String className);
-    -err(String msg);
-}
-
-class JCallGraph {
-    List<String> lPaquetes;
-    +main(String[] args);
-    +createCSV(String methodCalls);
-    +isPackage(String methodName) : boolean
-    +isExactSubsecuence(String source, String subItem): boolean
-}
-
-class MethodCallsList {
-    {static} MethodCallsList mCallsList;
-    List<Map<MethodReport, List<MethodReport>>> methodCalls;
-    -MethodCallsList();
-    +getMethodCallsList(): MethodCallsList;
-    +getMethodCalls(): List<Map<MethodReport, List<MethodReport>>>;
-    +add(Map<MethodReport, List<MethodReport>> map);
-    +getKey(MethodReport method, Map<MethodReport, List<MethodReport>> map): MethodReport ;
-}
-
-class MethodReport {
-    String nombre;
-    String paquete;
-    int LOC;
-    String resultado;
-    int lineaClase;
-    String tipo;
-    int ultimaLinea;
-    int wmc;
-    +MethodReport(String nombre, String paquete, int ultimaLinea, String resultado, int lineaClase, String tipo);
-    +MethodReport(String nombre);
-    +getNombre(): String;
-    +setNombre(String nombre);
-    +getPaquete(): String ;
-    +setPaquete(String paquete);
-    +getLOC(): int ;
-    +setLOC(int lOC);
-    +getResultado(): String;
-    +setResultado(String resultado);
-    +getLineaClase(): int;
-    +setLineaClase(int lineaClase);
-    +equals(Object obj): boolean ;
-    +hashCode(): int;
-    +toString(): String;
-    +getUltimaLinea(): int;
-    +setUltimaLinea(int ultimaLinea);
-    +getWmc(): int;
-    +setWmc(int wmc);
-}
-
-class MethodVisitor {
-    JavaClass visitedClass;
-    MethodGen mg; 
-    ConstantPoolGen cp;
-    MethodReport method;
-    List<MethodReport> methodCalls;
-    ConstantPoolGen constants;
-    static CalledFromList cfl;
-    List<String> methodCalls;
-    +MethodVisitor(MethodGen m, JavaClass jc, ConstantPoolGen cpg);
-    +argumentList(Type[] arguments): String;
-    +start() : Map<MethodReport, List<MethodReport>>;
-    +visitInstruction(Instruction i) : boolean;
-    +isVisitable() : boolean;
-    +getMethod(String name) : Method;
-}
-
-package callgraph.exporters {
-
-    interface IExporter {
-        create();
-        printChildren(MethodReport method, Map<MethodReport, List<MethodReport>> map, int level);
+    class CalledFromList {
+        Map<String,List<String>> calledMap;
+        {static} CalledFromList calledFromList;
+        -CalledFromList();
+        +getCalledMap(): Map<String, List<String>>;
+        +getCalledfromlist(): CalledFromList;
+        +add(String method);
+        +addToList(String key, String val);
     }
 
-    class CSVExporter implements IExporter {
-        String projectName;
-        +CSVExporter(String projectName);
-        +create();
-        +printChildren(MethodReport method, Map<MethodReport, List<MethodReport>> map, int level);
+    class ClassVisitor extends EmptyVisitor {
+        JavaClass clazz;
+        ConstantPoolGen constants;
+        String classReferenceFormat;
+        final DynamicCallManager DCManager;
+        List<String> methodCalls;
+        +visitJavaClass(JavaClass jc);
+        +visitConstantPool(ConstantPool constantPool); 
+        +visitMethod(Method method);
+        +ClassVisitor start();
+        +visitConstantPool(ConstantPool constantPool);
+        +visitMethod(Method method);
+        +start() : ClassVisitor;
+        +methodCalls() : List<String>;
+    }
+
+    class CliManager {
+
+    }
+
+    class DynamicCallManager {
+        Map<String, String> dynamicCallers;
+        +retrieveCalls(Method method, JavaClass jc);
+        +getMethodNameFromHandleIndex(ConstantPool cp, int callIndex): String;
+        +linkCalls(Method method);
+        +getBootstrapMethods(JavaClass jc): BootstrapMethod[];
+        +getDynamicCallers() : Map<String, String>;
+    }
+
+    class Instrumenter implements ClassFileTransformer {
+        {static} List<Pattern> pkgIncl;
+        {static} List<Pattern> pkgExcl;
+        +premain(String argument, Instrumentation instrumentation);
+        +transform(ClassLoader loader, String className, Class<?> clazz,
+                java.security.ProtectionDomain domain, byte[] bytes): byte[];
+        -enhanceClass(String name, byte[] b): byte[] ;
+        -enhanceMethod(CtBehavior method, String className);
+        -err(String msg);
+    }
+
+    class JCallGraph {
+        List<String> lPaquetes;
+        +main(String[] args);
+        +createCSV(String methodCalls);
+        +isPackage(String methodName) : boolean
+        +isExactSubsecuence(String source, String subItem): boolean
+    }
+
+    class MethodCallsList {
+        {static} MethodCallsList mCallsList;
+        List<Map<MethodReport, List<MethodReport>>> methodCalls;
+        -MethodCallsList();
+        +getMethodCallsList(): MethodCallsList;
+        +getMethodCalls(): List<Map<MethodReport, List<MethodReport>>>;
+        +add(Map<MethodReport, List<MethodReport>> map);
+        +getKey(MethodReport method, Map<MethodReport, List<MethodReport>> map): MethodReport ;
+    }
+
+    class MethodReport {
+        String nombre;
+        String paquete;
+        int LOC;
+        String resultado;
+        int lineaClase;
+        String tipo;
+        int ultimaLinea;
+        int wmc;
+        +MethodReport(String nombre, String paquete, int ultimaLinea, String resultado, int lineaClase, String tipo);
+        +MethodReport(String nombre);
+        +getNombre(): String;
+        +setNombre(String nombre);
+        +getPaquete(): String ;
+        +setPaquete(String paquete);
+        +getLOC(): int ;
+        +setLOC(int lOC);
+        +getResultado(): String;
+        +setResultado(String resultado);
+        +getLineaClase(): int;
+        +setLineaClase(int lineaClase);
+        +equals(Object obj): boolean ;
+        +hashCode(): int;
+        +toString(): String;
+        +getUltimaLinea(): int;
+        +setUltimaLinea(int ultimaLinea);
+        +getWmc(): int;
+        +setWmc(int wmc);
+    }
+
+    class MethodVisitor extends EmptyVisitor {
+        JavaClass visitedClass;
+        MethodGen mg; 
+        ConstantPoolGen cp;
+        MethodReport method;
+        List<MethodReport> methodCalls;
+        ConstantPoolGen constants;
+        static CalledFromList cfl;
+        List<String> methodCalls;
+        +MethodVisitor(MethodGen m, JavaClass jc, ConstantPoolGen cpg);
+        +argumentList(Type[] arguments): String;
+        +start() : Map<MethodReport, List<MethodReport>>;
+        +visitInstruction(Instruction i) : boolean;
+        +isVisitable() : boolean;
+        +getMethod(String name) : Method;
+    }
+    package exporters {
+        interface IExporter {
+            create();
+            printChildren(MethodReport method, Map<MethodReport, List<MethodReport>> map, int level);
+        }
+
+        class CSVExporter implements IExporter {
+            String projectName;
+            +CSVExporter(String projectName);
+            +create();
+            +printChildren(MethodReport method, Map<MethodReport, List<MethodReport>> map, int level);
+        }
     }
 }
+
 
 package com.github.mauricioaniche.ck {
+    ' package util {}
+    ' package metric {}
 
+    ' class CK {}
+    ' class CKClassResult {}
+    ' class CKMethodResult {}
+    ' class CKNotifier {}
+    ' class CKVisitor {}
+    ' class MetricsExecutor {}
+    ' class ResultWriter {}
+    ' class ResultWriter {}
+     class Runner {}
 }
 
 package org.apache.bcel {
-    class JavaClass {
-    }
-
-    class ConstantPoolGen {
-    }
-
-    class MethodGen {
-    }
-
-    class ConstantPool {
-    }
+    ' class JavaClass {}
+    ' class ConstantPoolGen {}
+    ' class MethodGen {}
+    ' class ConstantPool {}
 }
 
-MethodVisitor -up-|> EmptyVisitor
-ClassVisitor -up-|> EmptyVisitor
 
-JCallGraph -right-> ClassVisitor
-ClassVisitor -down-> JavaClass
-ClassVisitor -down-> ConstantPoolGen
+/' JCG '/
+callgraph -down-> org.apache.bcel
+
 ClassVisitor -down-> DynamicCallManager
-ClassVisitor -right-> MethodVisitor
-MethodVisitor -down-> JavaClass
-MethodVisitor -down-> ConstantPool
-MethodVisitor -down-> MethodGen
+ClassVisitor -> MethodVisitor
+
+JCallGraph -left-> ClassVisitor
+JCallGraph -down-> MethodCallsList
+JCallGraph -down-> CalledFromList
+JCallGraph -right-> Instrumenter
+JCallGraph -down-> Runner
+JCallGraph -down-> IExporter
+
+MethodCallsList -down-> MethodReport
+
+MethodVisitor -> CalledFromList
+MethodVisitor -> JCallGraph
+MethodVisitor -> MethodReport
+
+
+/' CK '/
+' CKNotifier -[hidden]> CKClassResult
+' CK -[hidden]>  MetricsExecutor
+' CK -[hidden]> ResultWriter
 @enduml
+
+
+' JCallGraph -right-> ClassVisitor
+' ClassVisitor -down-> JavaClass
+' ClassVisitor -down-> ConstantPoolGen
+' ClassVisitor -down-> DynamicCallManager
