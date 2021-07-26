@@ -1,0 +1,12 @@
+@startuml
+
+package callgraph as J {}
+package com.github.mauricioaniche.ck as CK {}
+package org.apache.bcel as B {}
+package org.eclipse.jdt as E {}
+
+J-down->B
+J->CK
+CK-down->E
+
+@enduml

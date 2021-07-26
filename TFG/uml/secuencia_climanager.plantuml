@@ -1,0 +1,34 @@
+@startuml
+
+participant JCallGraph as J
+participant CliManager as C
+participant Options as O 
+participant BasicParser as P
+participant CommandLine as CL
+participant HelpFormatter as H
+
+J -> C : new CliManager()
+J -> C : main(args)
+C -> O : addOption(String, boolean, String)
+note right 
+Tantas veces como 
+opciones se tengan
+end note
+C -> O : addOptionGroup(OptionGroup)
+alt try 
+    C -> P : new BasicParser()
+    C -> P : parse(Options, String[])
+    P -> C : cmdLine = CommandLine
+    C -> CL : getOptionValue(String)
+    CL -> C : String
+    alt option == null
+        C -> C : throw ParseException
+    note right
+    Tantas veces como 
+    opciones se tengan
+    end note
+    end
+else catch
+    C -> H : printHelp(String, Options)
+end
+@enduml

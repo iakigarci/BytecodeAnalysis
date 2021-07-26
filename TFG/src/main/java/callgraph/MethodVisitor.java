@@ -65,14 +65,13 @@ public class MethodVisitor extends EmptyVisitor {
 
 
     public Map<MethodReport, List<MethodReport>> start() {
-        method = new MethodReport(mg.getName(), mg.getClassName(), 0, mg.getReturnType().toString(), 0, "A");
+        method = new MethodReport(mg.getName(), mg.getClassName(), mg.getReturnType().toString());
         if (JCallGraph.isPackage(mg.getClassName()) && JCallGraph.isPackage(visitedClass.getClassName())) {
             if (mg.isAbstract() || mg.isNative())
                 return (HashMap<MethodReport, List<MethodReport>>) Collections.<MethodReport, List<MethodReport>>emptyMap();
 
             for (InstructionHandle ih = mg.getInstructionList().getStart(); ih != null; ih = ih.getNext()) {
                 Instruction i = ih.getInstruction();
-
                 if (!visitInstruction(i))
                     i.accept(this);
             }
@@ -123,7 +122,6 @@ public class MethodVisitor extends EmptyVisitor {
                     if (JCallGraph.isExactSubsecuence(i.getReferenceType(cp).toString(),
                             this.visitedClass.getClassName())) {
                         methodCalls.add(m);
-
                     }
                 }
             } else {

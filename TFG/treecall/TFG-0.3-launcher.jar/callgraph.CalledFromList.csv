@@ -1,0 +1,8 @@
+LOC,Nombre,Nivel,WMC,Resultado,Linea en clase,Llamado por
+0,<init>,0,0,void,0,
+3,getCalledMap,0,1,java.util.Map,16,"[callgraph.JCallGraphcreateCSV, callgraph.JCallGraphcreateCSV, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren]"
+6,getCalledfromlist,0,2,callgraph.CalledFromList,20,"[callgraph.JCallGraphmain, callgraph.MethodVisitor<init>, callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
+0,<init>,1,0,void,0,
+3,add,0,1,void,27,
+8,addToList,0,2,void,31,"[callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
+0,<clinit>,0,0,void,0,

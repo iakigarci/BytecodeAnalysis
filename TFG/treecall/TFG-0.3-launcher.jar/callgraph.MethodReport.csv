@@ -1,0 +1,19 @@
+LOC,Nombre,Nivel,WMC,Resultado,Linea en clase,Llamado por
+0,<init>,0,0,void,0,"[callgraph.MethodVisitorstart, callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
+3,setNombre,0,1,void,38,
+3,getPaquete,0,1,java.lang.String,42,"[callgraph.JCallGraphcreateCSV, callgraph.JCallGraphcreateCSV, callgraph.JCallGraphcreateCSV, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren, callgraph.JCallGraphaddCKMetrics, callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
+3,setPaquete,0,1,void,46,
+3,getLOC,0,1,int,50,"[callgraph.JCallGraphcreateCSV, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren]"
+3,setLOC,0,1,void,54,[callgraph.JCallGraphaddCKMetrics]
+3,getResultado,0,1,java.lang.String,58,"[callgraph.JCallGraphcreateCSV, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren]"
+3,setResultado,0,1,void,62,
+3,getLineaClase,0,1,int,66,"[callgraph.JCallGraphcreateCSV, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren]"
+3,setLineaClase,0,1,void,70,[callgraph.JCallGraphaddCKMetrics]
+10,equals,0,3,boolean,75,[callgraph.MethodCallsListgetKey]
+3,getNombre,1,1,java.lang.String,34,"[callgraph.JCallGraphcreateCSV, callgraph.JCallGraphcreateCSV, callgraph.JCallGraphcreateCSV, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren, callgraph.JCallGraphaddCKMetrics, callgraph.JCallGraphisZeroLelel, callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
+3,hashCode,0,1,int,87,
+3,toString,0,1,java.lang.String,92,
+3,getUltimaLinea,0,1,int,96,
+3,setUltimaLinea,0,1,void,100,
+3,getWmc,0,1,int,104,"[callgraph.JCallGraphcreateCSV, callgraph.JCallGraphprintChildren, callgraph.JCallGraphprintChildren]"
+3,setWmc,0,1,void,108,[callgraph.JCallGraphaddCKMetrics]

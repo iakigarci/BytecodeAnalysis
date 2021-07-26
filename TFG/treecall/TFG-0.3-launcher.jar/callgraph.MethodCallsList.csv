@@ -1,0 +1,7 @@
+LOC,Nombre,Nivel,WMC,Resultado,Linea en clase,Llamado por
+0,<init>,0,0,void,0,
+6,getMethodCallsList,0,2,callgraph.MethodCallsList,17,[callgraph.JCallGraphmain]
+0,<init>,1,0,void,0,
+3,getMethodCalls,0,1,java.util.List,24,"[callgraph.JCallGraphcreateCSV, callgraph.JCallGraphaddCKMetrics]"
+3,add,0,1,void,28,[callgraph.JCallGraphlambda$main$1]
+8,getKey,0,3,callgraph.MethodReport,32,[callgraph.JCallGraphprintChildren]

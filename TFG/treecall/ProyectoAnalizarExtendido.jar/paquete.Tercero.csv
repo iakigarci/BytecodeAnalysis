@@ -1,0 +1,6 @@
+LOC,Nombre,Nivel,WMC,Resultado,Linea en clase,Llamado por
+0,<init>,0,0,void,0,"[paquete.InstanciaInterfazfInterfaz, paquete.ClaseAbstractanoOverride, paquete.Mainmain, paquete.InstanciaAbstractasiOverride]"
+4,f5,1,1,void,9,[paquete.Mainmain]
+4,f6,2,1,void,14,
+4,f7,3,1,void,19,
+3,f8,4,1,void,24,"[paquete.InstanciaInterfazfInterfaz, paquete.ClaseAbstractanoOverride, paquete.InstanciaAbstractasiOverride]"

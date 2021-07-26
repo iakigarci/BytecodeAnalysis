@@ -1,0 +1,44 @@
+@startuml
+
+participant JCallGraph as J
+participant CliManager as C
+participant MethodCallsList as MCL
+participant CalledFromList as CFL
+participant File as F
+participant JarFile as JF
+participant ZipEntry as Z
+participant ClassParser as CP
+participant ClassVisitor as CV
+participant Runner as R
+participant ExporterFactory as EF
+J -> C : new CliManager()
+J -> C : main(args)
+
+alt try
+    J->MCL: getMethodCallsList()
+    MCL->J: MethodCallsList
+    J->F: new File
+    F->J: File
+    J->JF: new JarFile(File)
+    JF->J: JarFile
+    J->J: enumerationAsStream(Enumeration<T> e)
+    note right : Jar en formato stream
+    loop forEach
+        alt isDirectory() and getName().endsWith(".class")
+            J->CP: new ClassParser(String, String)
+            CP->J: cp = ClassParser
+            J->J: getClassVisitor()
+            J->CV: apply(ClassParser)
+            J->CV: start()
+            CV->J: HashMap<MethodReport, List<MethodReport>>
+            alt != null
+                J->MCL: add(HashMap<MethodReport, List<MethodReport>>)
+            end
+    end
+    J->R: main(String[])
+    J->EF: create()
+else catch
+    J->J: printStackTrace()
+end
+
+@enduml

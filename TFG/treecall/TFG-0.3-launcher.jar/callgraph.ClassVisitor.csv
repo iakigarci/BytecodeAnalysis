@@ -1,0 +1,11 @@
+LOC,Nombre,Nivel,WMC,Resultado,Linea en clase,Llamado por
+0,<init>,0,0,void,0,[callgraph.JCallGraphlambda$main$0]
+6,visitConstantPool,0,3,void,74,
+7,visitMethod,0,2,void,82,
+4,start,0,1,callgraph.ClassVisitor,90,[callgraph.JCallGraphlambda$main$1]
+10,visitJavaClass,1,2,void,62,
+3,getPackage,0,1,java.lang.String,95,
+3,methodCalls,0,1,java.util.HashMap,98,[callgraph.JCallGraphlambda$main$1]
+3,getMethodGenList,0,1,java.util.List,102,
+3,setMethodGenList,0,1,void,106,
+3,getMethodGen,0,1,org.apache.bcel.generic.MethodGen,102,

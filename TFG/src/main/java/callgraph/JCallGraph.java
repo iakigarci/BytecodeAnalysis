@@ -107,7 +107,7 @@ public class JCallGraph {
             File f = new File(args[0]);
             if (!f.exists()) {
                 System.err.println("Jar file " + args[0] + " does not exist");
-            }
+            } 
             try (JarFile jar = new JarFile(f)) {
                 Stream<JarEntry> entries = enumerationAsStream(jar.entries()); // All files from jar
                 entries.forEach(e -> {

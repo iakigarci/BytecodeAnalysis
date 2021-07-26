@@ -31,7 +31,7 @@ public class CSVExporter implements IExporter {
     @Override
     public void create() throws IOException {
         File dir = null;
-        String dirName = System.getProperty("user.dir") + "/csv/" + projectName;
+        String dirName = System.getProperty("user.dir") + "/treecall/" + projectName;
         Path path = Paths.get(dirName);
         dir = new File(dirName);
         if (Files.exists(path)) {

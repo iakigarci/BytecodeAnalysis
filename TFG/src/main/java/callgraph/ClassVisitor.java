@@ -55,9 +55,6 @@ public class ClassVisitor extends EmptyVisitor {
 
     public ClassVisitor(JavaClass jc) {
         clazz = jc;
-        if(JCallGraph.isPackage(clazz.getPackageName())) {
-
-        }
         constants = new ConstantPoolGen(clazz.getConstantPool());
         //classReferenceFormat = "C:" + clazz.getClassName() + " %s";
     }
@@ -79,11 +76,6 @@ public class ClassVisitor extends EmptyVisitor {
             Constant constant = constantPool.getConstant(i);
             if (constant == null)
                 continue;
-            // if (constant.getTag() == 7) {
-            //     String referencedClass = 
-            //         constantPool.constantToString(constant);
-            //     // System.out.println(String.format(classReferenceFormat, referencedClass));
-            // }
         }
     }
 

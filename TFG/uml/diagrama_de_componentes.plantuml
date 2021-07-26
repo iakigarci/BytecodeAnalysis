@@ -1,0 +1,117 @@
+@startuml components
+
+
+package callgraph {
+
+    class CalledFromList {
+    }
+
+    class ClassVisitor  { 
+    }
+
+' extends EmptyVisitor
+    class CliManager {
+
+    }
+
+    class DynamicCallManager {
+    }
+
+    class Instrumenter {
+    }
+
+    class JCallGraph {
+    }
+
+    class MethodCallsList {
+    }
+
+    class MethodReport {
+    }
+
+    class MethodVisitor {
+    }
+    package exporters {
+        interface IExporter {
+            }
+
+        class CSVExporter implements IExporter {
+            }
+    }
+}
+
+
+package com.github.mauricioaniche.ck {
+    package util {}
+    package metric {}
+
+    class CK {}
+    class CKClassResult {}
+    class CKMethodResult {}
+    class CKNotifier {}
+    class CKVisitor {}
+    class MetricsExecutor {}
+    class ResultWriter {}
+    class ResultWriter {}
+    class Runner {}
+}
+
+package org.apache.bcel {
+    class Constant {}
+    class JavaClass {}
+    class ConstantPoolGen {}
+    class MethodGen {}
+    class ConstantPool {}
+    class EmptyVisitor {}
+    class ClassParser {}
+}
+
+
+/' JCG '/
+
+ClassVisitor -down-> DynamicCallManager
+ClassVisitor -> MethodVisitor
+ClassVisitor -up-> org.apache.bcel
+
+JCallGraph -> ClassVisitor
+JCallGraph -down-> MethodCallsList
+JCallGraph -down-> CalledFromList
+JCallGraph -right-> Instrumenter
+JCallGraph -up-> Runner
+JCallGraph -down-> IExporter
+
+MethodCallsList -down-> MethodReport
+
+MethodVisitor -down-> CalledFromList
+MethodVisitor -up-> org.apache.bcel
+
+DynamicCallManager -> org.apache.bcel
+
+/' CK '/
+
+Runner -right-> CK
+Runner -> ResultWriter
+
+CKVisitor -> CKClassResult
+CKVisitor -up-> util
+ResultWriter -> CKClassResult
+metric -down-> CKClassResult
+
+CKVisitor -> CKMethodResult
+ResultWriter -> CKMethodResult
+metric -down-> CKMethodResult
+CKClassResult -down-> CKMethodResult
+
+MetricsExecutor -down-> CKNotifier
+
+MetricsExecutor -down-> CKVisitor
+
+CK -down-> MetricsExecutor
+CK -> util
+
+metric -> util
+
+
+@enduml
+
+

@@ -12,8 +12,10 @@ public class MethodReport {
     private int ultimaLinea;
     private int wmc;
 
-    public MethodReport() {
-
+    public MethodReport(String nombre, String paquete, String resultado) {
+        this.nombre = nombre;
+        this.paquete = paquete;
+        this.resultado = resultado;
     }
 
     public MethodReport(String nombre, String paquete, int ultimaLinea, String resultado, int lineaClase, String tipo) {

@@ -100,7 +100,7 @@ public class CK {
 			ASTParser parser = ASTParser.newParser(AST.JLS11);
 			
 		
-			parser.setResolveBindings(true); // Cambiar
+			parser.setResolveBindings(false); // Cambiar
 			parser.setBindingsRecovery(true);
 			
 			Map<String, String> options = JavaCore.getOptions();

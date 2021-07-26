@@ -132,7 +132,6 @@ package callgraph {
     }
 }
 
-
 package com.github.mauricioaniche.ck {
     ' package util {}
     ' package metric {}
@@ -157,7 +156,7 @@ package org.apache.bcel {
 
 
 /' JCG '/
-callgraph -down-> org.apache.bcel
+callgraph -up-> org.apache.bcel
 
 ClassVisitor -down-> DynamicCallManager
 ClassVisitor -> MethodVisitor
@@ -180,10 +179,11 @@ MethodVisitor -> MethodReport
 ' CKNotifier -[hidden]> CKClassResult
 ' CK -[hidden]>  MetricsExecutor
 ' CK -[hidden]> ResultWriter
-@enduml
-
 
 ' JCallGraph -right-> ClassVisitor
 ' ClassVisitor -down-> JavaClass
 ' ClassVisitor -down-> ConstantPoolGen
 ' ClassVisitor -down-> DynamicCallManager
+@enduml
+
+
