@@ -13,7 +13,7 @@ package callgraph {
         +addToList(String key, String val);
     }
 
-    class ClassVisitor extends EmptyVisitor {
+    class ClassVisitor <? extends EmptyVisitor> {
         JavaClass clazz;
         ConstantPoolGen constants;
         String classReferenceFormat;
@@ -42,7 +42,7 @@ package callgraph {
         +getDynamicCallers() : Map<String, String>;
     }
 
-    class Instrumenter implements ClassFileTransformer {
+    class Instrumenter <?implements ClassFileTransformer> {
         {static} List<Pattern> pkgIncl;
         {static} List<Pattern> pkgExcl;
         +premain(String argument, Instrumentation instrumentation);
@@ -101,7 +101,7 @@ package callgraph {
         +setWmc(int wmc);
     }
 
-    class MethodVisitor extends EmptyVisitor {
+    class MethodVisitor <?extends EmptyVisitor> {
         JavaClass visitedClass;
         MethodGen mg; 
         ConstantPoolGen cp;
@@ -129,34 +129,38 @@ package callgraph {
             +create();
             +printChildren(MethodReport method, Map<MethodReport, List<MethodReport>> map, int level);
         }
+
+        class ExporterFactory {
+            exportFiles();
+        }
     }
 }
 
-package com.github.mauricioaniche.ck {
-    ' package util {}
-    ' package metric {}
+' package com.github.mauricioaniche.ck {
+'     ' package util {}
+'     ' package metric {}
 
-    ' class CK {}
-    ' class CKClassResult {}
-    ' class CKMethodResult {}
-    ' class CKNotifier {}
-    ' class CKVisitor {}
-    ' class MetricsExecutor {}
-    ' class ResultWriter {}
-    ' class ResultWriter {}
-     class Runner {}
-}
+'     ' class CK {}
+'     ' class CKClassResult {}
+'     ' class CKMethodResult {}
+'     ' class CKNotifier {}
+'     ' class CKVisitor {}
+'     ' class MetricsExecutor {}
+'     ' class ResultWriter {}
+'     ' class ResultWriter {}
+'      class Runner {}
+' }
 
-package org.apache.bcel {
-    ' class JavaClass {}
-    ' class ConstantPoolGen {}
-    ' class MethodGen {}
-    ' class ConstantPool {}
-}
+' package org.apache.bcel <<Node>>{
+'     ' class JavaClass {}
+'     ' class ConstantPoolGen {}
+'     ' class MethodGen {}
+'     ' class ConstantPool {}
+' }
 
 
 /' JCG '/
-callgraph -up-> org.apache.bcel
+' callgraph -up-> org.apache.bcel
 
 ClassVisitor -down-> DynamicCallManager
 ClassVisitor -> MethodVisitor
@@ -165,8 +169,9 @@ JCallGraph -left-> ClassVisitor
 JCallGraph -down-> MethodCallsList
 JCallGraph -down-> CalledFromList
 JCallGraph -right-> Instrumenter
-JCallGraph -down-> Runner
-JCallGraph -down-> IExporter
+' JCallGraph -down-> Runner
+JCallGraph -down-> ExporterFactory
+JCallGraph -up-> CliManager
 
 MethodCallsList -down-> MethodReport
 
@@ -174,6 +179,7 @@ MethodVisitor -> CalledFromList
 MethodVisitor -> JCallGraph
 MethodVisitor -> MethodReport
 
+ExporterFactory -> IExporter
 
 /' CK '/
 ' CKNotifier -[hidden]> CKClassResult

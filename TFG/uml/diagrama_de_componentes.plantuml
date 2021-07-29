@@ -37,6 +37,7 @@ package callgraph {
 
         class CSVExporter implements IExporter {
             }
+        class ExportFactory {}
     }
 }
 
@@ -56,7 +57,7 @@ package com.github.mauricioaniche.ck {
     class Runner {}
 }
 
-package org.apache.bcel {
+package org.apache.bcel <<Node>> {
     class Constant {}
     class JavaClass {}
     class ConstantPoolGen {}
@@ -64,30 +65,40 @@ package org.apache.bcel {
     class ConstantPool {}
     class EmptyVisitor {}
     class ClassParser {}
+    class Method {}
 }
 
+package org.eclipse.jdt.core <<Node>> {
+
+}
 
 /' JCG '/
 
-ClassVisitor -down-> DynamicCallManager
+ClassVisitor -left-> DynamicCallManager
 ClassVisitor -> MethodVisitor
-ClassVisitor -up-> org.apache.bcel
+ClassVisitor -> org.apache.bcel
+
 
 JCallGraph -> ClassVisitor
-JCallGraph -down-> MethodCallsList
-JCallGraph -down-> CalledFromList
-JCallGraph -right-> Instrumenter
-JCallGraph -up-> Runner
-JCallGraph -down-> IExporter
+JCallGraph -up-> MethodCallsList
+JCallGraph -up-> CalledFromList
+JCallGraph -> Instrumenter
+JCallGraph -down-> Runner
+JCallGraph -up-> ExportFactory
+JCallGraph -left-> CliManager
 
-MethodCallsList -down-> MethodReport
+MethodCallsList -up-> MethodReport
 
 MethodVisitor -down-> CalledFromList
-MethodVisitor -up-> org.apache.bcel
+MethodVisitor -> org.apache.bcel
 
 DynamicCallManager -> org.apache.bcel
 
+ExportFactory -> IExporter
+
 /' CK '/
+
+com.github.mauricioaniche.ck -down-> org.eclipse.jdt.core
 
 Runner -right-> CK
 Runner -> ResultWriter
