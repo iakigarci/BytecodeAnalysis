@@ -65,6 +65,7 @@ In order to carry out this project, a study has been made of the different optio
 </p>
 
 _For more information, please refer to the [Documentation](Documentation.pdf) (Spanish)_
+_Summarized information also included in the poster  [Poster](Poster.pdf) (Spanish)_
 
 ### Built With
 
