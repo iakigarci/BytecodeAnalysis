@@ -53,11 +53,8 @@ import java.util.stream.StreamSupport;
 import com.github.mauricioaniche.ck.CKClassResult;
 import com.github.mauricioaniche.ck.CKMethodResult;
 import com.github.mauricioaniche.ck.Runner;
-
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang.time.StopWatch;
-
-import callgraph.exporters.CSVExporter;
+import callgraph.exporters.IExporter;
 
 import org.apache.bcel.classfile.ClassParser;
 
@@ -71,10 +68,6 @@ public class JCallGraph {
 
     private static List<String> lInclude;
     private static List<String> lExclude = null;
-    public static List<MethodReport> visitedMethods = new ArrayList<MethodReport>();
-    public static CSVPrinter csvPrinter = null;
-    public static CalledFromList cfl;
-    public static String calledFrom = "";
     private static JCallGraph jCallGraph = null;
     public static MethodCallsList methodCallsList;
     public static void main(String[] args) {
@@ -93,7 +86,6 @@ public class JCallGraph {
 
         try {
             methodCallsList = MethodCallsList.getMethodCallsList();
-            cfl = CalledFromList.getCalledfromlist();
             if (args[1].length() != 0) {
                 lInclude = new ArrayList<String>(Arrays.asList(args[1].split(",")));
             } else {
@@ -123,9 +115,6 @@ public class JCallGraph {
                         }
                     }
                 });
-                // BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
-                // log.write(methodCalls.toString());
-                // log.close();
             }
             System.out.println("[CALLGRAPH]: Tiempo transcurrido -> " + stopWatch + "\n");
             String[] runArgs = { args[3] };
@@ -136,16 +125,22 @@ public class JCallGraph {
                 e.printStackTrace();
             }
             System.out.println("[METRICAS]: Tiempo transcurrido -> " + stopWatch + "\n");
-            CSVExporter csvExporter = new CSVExporter(args[0]);
-            csvExporter.create();
+            exportFiles(args);
             System.out.println("[FINAL]: Tiempo transcurrido -> " + stopWatch + "\n");
             stopWatch.stop();
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
+
+
+    private static void exportFiles(String[] args) throws IOException {
+        ExportFactory exportFactory = new ExportFactory();
+        IExporter exporter = exportFactory.createFiles("CSVExporter", args[0]);
+        exporter.create();
+    }
+
 
     public static JCallGraph getJCallGraph() {
         if (jCallGraph == null) {
@@ -224,17 +219,5 @@ public class JCallGraph {
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(source);
         return m.find();
-    }
-
-    public static boolean isZeroLelel(HashMap<MethodReport, List<MethodReport>> map, MethodReport m) {
-        if (m.getNombre().contains("init")) {
-            return true;
-        }
-        for (Map.Entry<MethodReport, List<MethodReport>> entry : map.entrySet()) {
-            if (entry.getValue().contains(m)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

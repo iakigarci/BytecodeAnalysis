@@ -1,0 +1,30 @@
+@startuml
+
+participant JCallGraph as J
+participant Runner as R
+participant CK as CK 
+participant ResultWriter as RW
+
+J -> R: main(String[] args)
+activate R 
+R -> RW: new ResultWriter()
+activate RW 
+RW -> R: ResultWriter
+deactivate RW 
+R -> CK: new CK(boolean, int, boolean)
+activate CK 
+CK -> R: CK
+deactivate CK
+R -> CK: notify()
+alt try 
+    R -> RW: printResult(CKClassResult)
+    R -> J: addCKMetrics(CKClassResult)
+    deactivate R
+    note right
+        Buscar la clase 
+        resultado en el 
+        mapa y añadir 
+        métricas
+    end note
+end 
+@enduml

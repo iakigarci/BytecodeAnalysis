@@ -1,0 +1,27 @@
+@startuml
+
+participant ClassVisitor as CV
+participant JavaClass as JC
+participant ConstantPool as CP
+participant DynamicCallManager as DC
+participant Method as M
+
+CV -> CV: visitJavaClass()
+activate CV
+CV -> JC: getConstantPool()
+activate JC
+JC -> CV: ConstantPool
+deactivate JC
+CV -> CP : accept(ClassVisitor)
+CV -> JC : getMethods()
+activate JC
+JC ->  CV: Method[]
+deactivate JC
+
+loop forEach
+    CV -> DC: retrieveCalls(Method, JavaClass)
+    CV -> DC: linkCalls(Method)
+    CV -> M: accept(ClassVisitor)
+end
+
+@enduml

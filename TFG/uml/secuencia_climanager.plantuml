@@ -8,6 +8,8 @@ participant CommandLine as CL
 participant HelpFormatter as H
 
 J -> C : new CliManager()
+activate J
+activate C
 J -> C : main(args)
 C -> O : addOption(String, boolean, String)
 note right 
@@ -18,9 +20,13 @@ C -> O : addOptionGroup(OptionGroup)
 alt try 
     C -> P : new BasicParser()
     C -> P : parse(Options, String[])
+    activate P
     P -> C : cmdLine = CommandLine
+    deactivate P
     C -> CL : getOptionValue(String)
+    activate CL
     CL -> C : String
+    deactivate CL
     alt option == null
         C -> C : throw ParseException
     note right
@@ -31,4 +37,6 @@ alt try
 else catch
     C -> H : printHelp(String, Options)
 end
+deactivate C
+deactivate J
 @enduml

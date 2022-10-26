@@ -1,0 +1,45 @@
+@startuml
+
+participant JCallGraph as J
+participant ExportFactory as EF
+participant CliManager as CM
+participant CSVExporter as C
+participant IExporter as IE
+
+J -> J: exportFiles() 
+activate J
+J -> EF: new ExportFactory()
+activate EF 
+EF -> J: ExportFactory
+deactivate EF
+J -> EF : createFiles(CliManager)
+activate EF 
+EF -> CM: getType()
+activate CM 
+CM -> EF: String
+EF -> CM: getProjectName()
+CM -> EF: String
+deactivate CM
+alt switch (exportType)
+note right
+    Se instancia una clase 
+    dependiendo del tipo. Aquí 
+    se explica con formato CSV
+end note
+EF -> C: new CSVExporter(String)
+activate C
+C -> EF: CSVExporter
+deactivate C
+EF -> J: IExporter
+deactivate EF
+end
+J -> IE: create()
+deactivate J
+activate IE
+IE -> IE: printChildren()
+deactivate IE
+note left 
+Cada formato imprime los datos de diferente manera
+end note
+
+@enduml

@@ -1,16 +1,16 @@
 LOC,Nombre,Nivel,WMC,Resultado,Linea en clase,Llamado por
 0,<init>,0,0,void,0,
-67,main,0,11,void,80,
-11,enumerationAsStream,1,1,java.util.stream.Stream,178,
+65,main,0,11,void,73,
+11,enumerationAsStream,1,1,java.util.stream.Stream,173,
 0,createCSV,1,0,void,0,
-11,isZeroLelel,2,4,boolean,229,
+0,isZeroLelel,2,0,boolean,0,
 0,printChildren,2,0,void,0,
-6,getJCallGraph,0,2,callgraph.JCallGraph,150,
+6,getJCallGraph,0,2,callgraph.JCallGraph,145,
 0,<init>,1,0,void,0,
-19,addCKMetrics,0,7,void,157,
-3,getlInclude,0,1,java.util.List,190,
+19,addCKMetrics,0,7,void,152,
+3,getlInclude,0,1,java.util.List,185,
 0,lambda$main$1,0,0,void,0,
-31,isPackage,1,11,boolean,194,"[callgraph.ClassVisitor<init>, callgraph.MethodVisitorstart, callgraph.MethodVisitorstart, callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
-6,isExactSubsecuence,2,1,boolean,222,"[callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
+31,isPackage,1,11,boolean,189,"[callgraph.ClassVisitor<init>, callgraph.MethodVisitorstart, callgraph.MethodVisitorstart, callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
+6,isExactSubsecuence,2,1,boolean,217,"[callgraph.MethodVisitorvisitINVOKEVIRTUAL, callgraph.MethodVisitorvisitINVOKEINTERFACE, callgraph.MethodVisitorvisitINVOKESPECIAL, callgraph.MethodVisitorvisitINVOKESTATIC, callgraph.MethodVisitorvisitINVOKEDYNAMIC]"
 0,lambda$main$0,0,0,callgraph.ClassVisitor,0,
 0,<clinit>,0,0,void,0,

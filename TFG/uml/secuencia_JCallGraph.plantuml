@@ -10,35 +10,47 @@ participant ZipEntry as Z
 participant ClassParser as CP
 participant ClassVisitor as CV
 participant Runner as R
-participant ExporterFactory as EF
-J -> C : new CliManager()
-J -> C : main(args)
 
+activate J
+J -> C : new CliManager()
+activate C
+J -> C : main(args)
+deactivate C
 alt try
     J->MCL: getMethodCallsList()
+    activate MCL
     MCL->J: MethodCallsList
+    deactivate MCL
     J->F: new File
+    activate F
     F->J: File
+    deactivate F
     J->JF: new JarFile(File)
+    activate JF
     JF->J: JarFile
+    deactivate JF
     J->J: enumerationAsStream(Enumeration<T> e)
     note right : Jar en formato stream
     loop forEach
         alt isDirectory() and getName().endsWith(".class")
             J->CP: new ClassParser(String, String)
+            activate CP
             CP->J: cp = ClassParser
+            deactivate CP
             J->J: getClassVisitor()
             J->CV: apply(ClassParser)
             J->CV: start()
+            activate CV
             CV->J: HashMap<MethodReport, List<MethodReport>>
+            deactivate CV
             alt != null
                 J->MCL: add(HashMap<MethodReport, List<MethodReport>>)
             end
     end
     J->R: main(String[])
-    J->EF: create()
+    J->J: exportFiles();
 else catch
     J->J: printStackTrace()
 end
-
+deactivate J
 @enduml

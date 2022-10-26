@@ -73,7 +73,6 @@ public class CliManager {
             }  
         } catch (org.apache.commons.cli.ParseException ex){  
             System.out.println(ex.getMessage());  
-              
             new HelpFormatter().printHelp(CliManager.class.getCanonicalName(), options );    // Error, imprimimos la ayuda  
         } catch (java.lang.NumberFormatException ex){  
             new HelpFormatter().printHelp(CliManager.class.getCanonicalName(), options );    // Error, imprimimos la ayuda  

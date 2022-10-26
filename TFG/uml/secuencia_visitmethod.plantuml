@@ -1,0 +1,47 @@
+@startuml 
+participant ClassVisitor as CV
+participant JavaClass as JC
+participant ConstantPool as CP
+participant Method as M
+participant MethodGen as MG
+participant MethodVisitor as MV
+participant MethodReport as MR
+participant Instruction as I
+
+CV -> CV: visitMethod(Method)
+activate CV
+CV -> MG: new MethodGen(Method, String, ConstantPoolGen)
+activate MG
+MG -> CV: MethodGen
+deactivate MG
+CV -> MV: new MethodVisitor(MethodGen, JavaClass, ConstantPoolGen)
+activate MV
+MV -> CV: MethodVisitor
+deactivate MV
+
+alt isVisitable()
+    CV -> MV: start()
+    activate MV
+    MV -> MR: new MethodReport(String, String, String)
+    activate MR
+    MR -> MV: MethodReport
+    deactivate MR
+    alt isPackage()
+        alt  &mg.isAbstract() || mg.isNative()
+            MV -> CV: emptyMap() 
+        end
+        loop forEach InstructionHandle
+            MV -> I: getInstruction()
+            activate I
+            I -> MV: Instruction
+            deactivate I
+            alt !visitInstruction(Instruction)
+                MV -> I: accept(MethodVisitor)
+            end
+        end
+    end
+    MV -> CV: Map<MethodReport, List<MethodReport>>
+    deactivate MV
+end 
+
+@enduml

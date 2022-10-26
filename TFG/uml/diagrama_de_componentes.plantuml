@@ -3,41 +3,41 @@
 
 package callgraph {
 
-    class CalledFromList {
+    class CalledFromList #TECHNOLOGY {
     }
 
-    class ClassVisitor  { 
+    class ClassVisitor #AliceBlue { 
     }
 
 ' extends EmptyVisitor
-    class CliManager {
+    class CliManager #TECHNOLOGY {
 
     }
 
-    class DynamicCallManager {
+    class DynamicCallManager  {
     }
 
     class Instrumenter {
     }
 
-    class JCallGraph {
+    class JCallGraph #AliceBlue {
     }
 
-    class MethodCallsList {
+    class MethodCallsList #TECHNOLOGY {
     }
 
-    class MethodReport {
+    class MethodReport #TECHNOLOGY {
     }
 
-    class MethodVisitor {
+    class MethodVisitor #AliceBlue {
     }
     package exporters {
-        interface IExporter {
+        interface IExporter #TECHNOLOGY {
             }
 
-        class CSVExporter implements IExporter {
+        class CSVExporter #TECHNOLOGY implements IExporter {
             }
-        class ExportFactory {}
+        class ExportFactory #TECHNOLOGY {}
     }
 }
 
@@ -52,9 +52,8 @@ package com.github.mauricioaniche.ck {
     class CKNotifier {}
     class CKVisitor {}
     class MetricsExecutor {}
-    class ResultWriter {}
-    class ResultWriter {}
-    class Runner {}
+    class ResultWriter #AliceBlue {}
+    class Runner #AliceBlue {}
 }
 
 package org.apache.bcel <<Node>> {
@@ -122,6 +121,12 @@ CK -> util
 
 metric -> util
 
+legend right
+    | Color | Tipo |
+    |<#TECHNOLOGY>| Propio|
+    |<#FEFECE>| Original |
+    |<#AliceBlue>| Hibrido |
+endlegend
 
 @enduml
 
