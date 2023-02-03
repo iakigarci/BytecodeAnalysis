@@ -53,6 +53,8 @@
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+Official End of Degree Project repository: https://addi.ehu.es/handle/10810/53315
+
 The project is located within the software quality branch, specifically in software maintenance. A program has been developed to obtain the call tree of a Java project, complementing the tree with method and class metrics. 
 
 First, the source and compiled code of a Java application is analyzed and then the call tree is built and metrics are added to analyze its quality, as requested by the company. The goal of the project was to replace the manual work performed by the company with an automated and error-free process.
